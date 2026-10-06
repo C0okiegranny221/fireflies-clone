@@ -1,0 +1,8 @@
+[00:00:00] Jordan Blake: Morning team, quick standup. Ticket volume is up twenty percent since the release.
+[00:00:08] Aisha Noor: Most of the new tickets are about the calendar sync. Customers see duplicate events after reconnecting Google Calendar.
+[00:00:19] Jordan Blake: Do we have a workaround we can share?
+[00:00:23] Aisha Noor: Yes, disconnecting and reconnecting with the full permission set fixes it. I'll write a help center article today.
+[00:00:33] Leo Park: Engineering confirmed the bug. The fix should ship in Thursday's release.
+[00:00:40] Jordan Blake: Great. Leo, can you post in the support channel once the fix is live?
+[00:00:46] Leo Park: Will do. I'll also send a macro for replying to affected customers.
+[00:00:53] Jordan Blake: Thanks everyone. Let's keep first response time under two hours this week.

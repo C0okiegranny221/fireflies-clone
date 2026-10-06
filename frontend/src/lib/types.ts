@@ -62,6 +62,7 @@ export interface ActionItem {
 
 export interface Task extends ActionItem {
   meeting_title: string;
+  meeting_started_at: string;
 }
 
 export interface MeetingListItem {

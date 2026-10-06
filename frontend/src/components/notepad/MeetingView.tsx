@@ -44,7 +44,7 @@ function NotepadSkeleton() {
 }
 
 /** The Fireflies "Notepad": AI notes on the left, transcript on the right, player below. */
-export function MeetingView({ id }: { id: number }) {
+export function MeetingView({ id, startMs = 0 }: { id: number; startMs?: number }) {
   const meetingQuery = useQuery({
     queryKey: queryKeys.meeting(id),
     queryFn: () => api.meetings.get(id),
@@ -121,7 +121,13 @@ export function MeetingView({ id }: { id: number }) {
     );
 
   return (
-    <PlayerProvider durationMs={durationMs} mediaUrl={meeting!.media_url}>
+    // Keyed so moving between meetings (or deep links) starts a fresh player.
+    <PlayerProvider
+      key={`${id}:${startMs}`}
+      durationMs={durationMs}
+      mediaUrl={meeting!.media_url}
+      initialMs={startMs}
+    >
       <title>{`${meeting!.title} | Fireflies`}</title>
       <div className="flex h-full min-h-0 flex-col">
         <NotepadHeader meeting={meeting!} />

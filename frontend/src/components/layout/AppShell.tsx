@@ -3,6 +3,8 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { useState, type ReactNode } from "react";
 
+import { NewMeetingModal } from "@/components/meetings/NewMeetingModal";
+
 import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
 
@@ -36,6 +38,8 @@ export function AppShell({ children }: { children: ReactNode }) {
         <Topbar onOpenMobileNav={() => setMobileOpen(true)} />
         <main className="flex min-h-0 flex-1 flex-col overflow-y-auto">{children}</main>
       </div>
+
+      <NewMeetingModal />
     </div>
   );
 }

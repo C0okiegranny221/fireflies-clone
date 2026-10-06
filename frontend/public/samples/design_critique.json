@@ -1,0 +1,11 @@
+{
+  "segments": [
+    { "speaker": "Lena Fischer", "start": 0.5, "text": "Let's review the new settings page. The goal was to cut the number of tabs from nine to five." },
+    { "speaker": "Jenna Kim", "start": 7.0, "text": "I like the grouping. Notifications and integrations feel much easier to find now." },
+    { "speaker": "Marcus Lee", "start": 13.5, "text": "One concern is the danger zone. Deleting the workspace is too close to the export button." },
+    { "speaker": "Lena Fischer", "start": 20.0, "text": "Good catch. I'll move delete into its own section with a confirmation step." },
+    { "speaker": "Jenna Kim", "start": 26.0, "text": "We also need to check the mobile layout, the tabs overflow on small screens." },
+    { "speaker": "Marcus Lee", "start": 31.5, "text": "I can build a quick prototype of the mobile version by Friday." },
+    { "speaker": "Lena Fischer", "start": 37.0, "text": "Perfect. Let's review again next week with the updated mocks." }
+  ]
+}

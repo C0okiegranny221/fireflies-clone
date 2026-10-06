@@ -80,8 +80,15 @@ def test_create_from_pasted_transcript_generates_notes(client: TestClient) -> No
         "Ada Lovelace",
     }
     assert [t["name"] for t in meeting["tags"]] == ["finance"]
+
     assignees = [(a["assignee"] or {}).get("name") for a in meeting["action_items"]]
     assert "Grace Hopper" in assignees
+
+
+def test_create_converts_offset_datetimes_to_utc(client: TestClient) -> None:
+    body = {"title": "Offset", "started_at": "2026-03-01T10:00:00+05:30"}
+    meeting = client.post(f"{API}/meetings", json=body).json()
+    assert meeting["started_at"] == "2026-03-01T04:30:00"
 
 
 def test_upload_vtt_and_reject_bad_files(client: TestClient) -> None:
@@ -131,6 +138,7 @@ def test_action_item_crud(client: TestClient) -> None:
 
     open_tasks = client.get(f"{API}/action-items", params={"completed": False}).json()
     assert created["id"] not in {t["id"] for t in open_tasks}
+    assert {"meeting_title", "meeting_started_at"} <= open_tasks[0].keys()
 
     assert client.delete(item_url).status_code == 204
     assert client.patch(item_url, json={"is_completed": False}).status_code == 404

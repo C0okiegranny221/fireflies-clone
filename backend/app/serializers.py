@@ -55,4 +55,8 @@ def meeting_detail(meeting: Meeting) -> MeetingDetail:
 
 def task_out(item: ActionItem) -> TaskOut:
     base = ActionItemOut.model_validate(item)
-    return TaskOut(**base.model_dump(), meeting_title=item.meeting.title)
+    return TaskOut(
+        **base.model_dump(),
+        meeting_title=item.meeting.title,
+        meeting_started_at=item.meeting.started_at,
+    )

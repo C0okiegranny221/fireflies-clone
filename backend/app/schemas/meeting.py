@@ -1,6 +1,6 @@
-from datetime import datetime
+from datetime import UTC, datetime
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 from app.models import MeetingSource
 from app.schemas.action_item import ActionItemOut
@@ -41,6 +41,14 @@ class MeetingCreate(BaseModel):
     transcript_text: str | None = None
     channel_id: int | None = None
     tags: list[str] = Field(default_factory=list)
+
+    @field_validator("started_at")
+    @classmethod
+    def _to_naive_utc(cls, value: datetime | None) -> datetime | None:
+        """Datetimes are stored as naive UTC; convert any offset the client sent."""
+        if value is not None and value.tzinfo is not None:
+            return value.astimezone(UTC).replace(tzinfo=None)
+        return value
 
 
 class MeetingUpdate(BaseModel):

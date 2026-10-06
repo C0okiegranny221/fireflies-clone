@@ -42,16 +42,20 @@ const TICK_MS = 100;
 export function PlayerProvider({
   durationMs,
   mediaUrl,
+  initialMs = 0,
   children,
 }: {
   durationMs: number;
   mediaUrl?: string | null;
+  /** Start position, e.g. from a ?t= deep link. */
+  initialMs?: number;
   children: ReactNode;
 }) {
-  const [currentMs, setCurrentMs] = useState(0);
+  const startMs = Math.min(Math.max(0, initialMs), durationMs);
+  const [currentMs, setCurrentMs] = useState(startMs);
   // Mirror of the last published position, so controls can read it without depending on
   // `currentMs` (which would recreate the controls object on every tick).
-  const currentRef = useRef(0);
+  const currentRef = useRef(startMs);
   const publish = useCallback((ms: number) => {
     currentRef.current = ms;
     setCurrentMs(ms);
@@ -61,7 +65,7 @@ export function PlayerProvider({
 
   const audioRef = useRef<HTMLAudioElement>(null);
   // Fake clock: position = baseMs + elapsed wall time × rate since baseTime.
-  const clock = useRef({ baseMs: 0, baseTime: 0, rate: 1 });
+  const clock = useRef({ baseMs: startMs, baseTime: 0, rate: 1 });
 
   const clamp = useCallback((ms: number) => Math.min(Math.max(0, ms), durationMs), [durationMs]);
 
@@ -150,7 +154,16 @@ export function PlayerProvider({
       <TimeContext value={currentMs}>
         {mediaUrl && (
           // Captions are the transcript itself, rendered alongside.
-          <audio ref={audioRef} src={mediaUrl} preload="metadata" className="hidden" />
+          <audio
+            ref={audioRef}
+            src={mediaUrl}
+            preload="metadata"
+            className="hidden"
+            // Apply a deep-link start position once the browser knows the media's length.
+            onLoadedMetadata={(e) => {
+              if (currentRef.current > 0) e.currentTarget.currentTime = currentRef.current / 1000;
+            }}
+          />
         )}
         {children}
       </TimeContext>

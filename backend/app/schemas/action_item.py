@@ -18,9 +18,10 @@ class ActionItemOut(ORMModel):
 
 
 class TaskOut(ActionItemOut):
-    """Action item plus its meeting title, for the cross-meeting Tasks page."""
+    """Action item plus its meeting's title and date, for the cross-meeting Tasks page."""
 
     meeting_title: str
+    meeting_started_at: datetime
 
 
 class ActionItemCreate(BaseModel):
