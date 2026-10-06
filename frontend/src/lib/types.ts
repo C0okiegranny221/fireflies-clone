@@ -45,7 +45,7 @@ export interface Summary {
   overview: string;
   keywords: string[];
   generated_by: SummarySource;
-  /** Provider/model for LLM summaries, e.g. "Groq · llama-3.3-70b-versatile". */
+  /** Provider/model for LLM summaries, e.g. "Groq · openai/gpt-oss-120b". */
   model: string | null;
   chapters: Chapter[];
   updated_at: string;

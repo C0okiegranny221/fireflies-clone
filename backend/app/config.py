@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     llm_provider: Literal["none", "openai", "claude"] = "none"
     llm_base_url: str = "https://api.groq.com/openai/v1"
     llm_api_key: str | None = None
-    llm_model: str = "llama-3.3-70b-versatile"
+    llm_model: str = "openai/gpt-oss-120b"
     llm_timeout_sec: float = 60
 
     anthropic_api_key: str | None = None
