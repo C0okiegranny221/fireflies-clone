@@ -9,7 +9,7 @@ class Settings(BaseSettings):
     database_url: str = "sqlite:///./fireflies.db"
     cors_origins: list[str] = ["http://localhost:3000"]
     anthropic_api_key: str | None = None
-    anthropic_model: str = "claude-sonnet-5-5"
+    anthropic_model: str = "claude-opus-5-5"
 
 
 settings = Settings()

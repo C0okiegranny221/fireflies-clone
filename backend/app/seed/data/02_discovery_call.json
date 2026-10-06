@@ -1,0 +1,63 @@
+{
+  "title": "Northwind Logistics — Discovery Call",
+  "days_ago": 1,
+  "time": "15:30",
+  "source": "notetaker",
+  "channel": "Sales",
+  "tags": ["sales", "discovery"],
+  "participants": [
+    {"name": "Daniel Ortiz", "email": "daniel.ortiz@northwind.com"},
+    {"name": "Sofia Romero", "email": "sofia.romero@northwind.com"},
+    {"name": "Hannah Brooks", "email": "hannah@nimbus.io"}
+  ],
+  "segments": [
+    ["0:00", "Hannah Brooks", "Hi Daniel, hi Sofia, thanks for making the time. I'm Hannah, I lead sales for the mid-market team, and Alex here runs product. The goal today is to understand how your teams run meetings and see whether we're a fit."],
+    ["0:18", "Daniel Ortiz", "Thanks for having us. I'm the VP of Operations at Northwind, and Sofia runs our customer success org. We have about two hundred people across dispatch, account management and support."],
+    ["0:34", "Hannah Brooks", "Great. To start, can you walk me through what prompted you to look at meeting assistants right now?"],
+    ["0:41", "Sofia Romero", "Sure. My team runs around four hundred customer calls a week. Notes are inconsistent, and when an account changes hands, the new manager has no idea what was promised. Last quarter we lost a renewal because a discount commitment was never written down."],
+    ["1:04", "Daniel Ortiz", "And on the operations side, our weekly carrier reviews are long, and nobody wants to take notes. Decisions get lost and we end up having the same conversation twice."],
+    ["1:20", "Alex Rivera", "That's a really common pattern. When a commitment gets lost like that, was it a decision made on the call that never got into the CRM?"],
+    ["1:30", "Sofia Romero", "Exactly. The account manager said it verbally, and the CRM entry just said 'good call, customer happy'."],
+    ["1:39", "Hannah Brooks", "What tools are you using today for calls and for the CRM?"],
+    ["1:44", "Daniel Ortiz", "Mostly Zoom, with some Google Meet for external partners. Our CRM is HubSpot, and we use Slack internally."],
+    ["1:55", "Alex Rivera", "Good, we integrate natively with all of those. After a call, the summary and action items can be pushed to the HubSpot deal automatically, and a recap posted to a Slack channel."],
+    ["2:10", "Sofia Romero", "That would solve most of my problem. Can we customize what goes into the summary? For renewals I need pricing, commitments and risks captured specifically."],
+    ["2:23", "Alex Rivera", "Yes. You can create custom note templates per meeting type, so renewal calls would get a section for pricing discussed, commitments made and churn risks. Topic trackers can also flag whenever someone mentions discount or cancellation."],
+    ["2:42", "Daniel Ortiz", "Security is going to be the first question from our IT team. Where is the data stored, and can we control retention?"],
+    ["2:52", "Hannah Brooks", "We're SOC 2 Type II and GDPR compliant, data is encrypted at rest and in transit, and admins can set retention policies per workspace. I'll send over our security package and the data processing agreement."],
+    ["3:10", "Daniel Ortiz", "Good. We'll also need SSO. We're on Okta."],
+    ["3:15", "Hannah Brooks", "SSO with Okta is included in the Business plan. What does your timeline look like for a decision?"],
+    ["3:22", "Daniel Ortiz", "We have budget approved for this quarter. Ideally we'd pilot in November and roll out to everyone by January."],
+    ["3:33", "Sofia Romero", "For the pilot I'd want my renewal team, about fifteen people, plus Daniel's carrier review meeting."],
+    ["3:43", "Hannah Brooks", "That's a great pilot scope. We usually suggest defining success criteria up front. What would make the pilot a clear win for you?"],
+    ["3:52", "Sofia Romero", "Every renewal call has commitments logged in HubSpot within an hour, and the account managers stop writing notes manually."],
+    ["4:03", "Daniel Ortiz", "For me, decisions from the carrier review get posted to Slack automatically, and we stop repeating discussions."],
+    ["4:13", "Alex Rivera", "Both are very measurable. We can set up a dashboard that tracks how many calls were captured and how many action items were synced to HubSpot."],
+    ["4:24", "Hannah Brooks", "On pricing, for two hundred seats on the Business plan you'd be looking at our volume tier. I'll put together a proposal with pilot pricing that converts to an annual contract."],
+    ["4:38", "Daniel Ortiz", "Please do. Our procurement team will also need the vendor questionnaire filled out. I'll send it to you today."],
+    ["4:47", "Hannah Brooks", "Perfect. So next steps on my side: security package, DPA and the proposal by Friday. Alex, could you set up a sandbox workspace with the HubSpot integration so Sofia's team can try it?"],
+    ["5:01", "Alex Rivera", "Yes, I'll set up the sandbox with a renewal call template this week and share the login with Sofia."],
+    ["5:09", "Sofia Romero", "Great. I'll pick the fifteen pilot users and send you the list."],
+    ["5:15", "Hannah Brooks", "Wonderful. Let's book a follow-up for next Tuesday to review the proposal together. Thank you both, this was really helpful."]
+  ],
+  "summary": {
+    "overview": "Northwind Logistics, a 200-person logistics company, is evaluating meeting assistants because commitments from customer calls never reach the CRM. A renewal was lost last quarter because a discount promise was never written down. Their stack is Zoom, Google Meet, HubSpot and Slack, and security, retention and Okta SSO are firm requirements. Budget is approved for this quarter, with a pilot in November for 15 renewal managers plus the carrier review meeting, and a full rollout by January. Nimbus will send the security package, DPA and a proposal by Friday and set up a sandbox workspace.",
+    "keywords": ["HubSpot", "Renewals", "Pilot", "Security", "SSO", "Custom Templates", "Pricing"],
+    "chapters": [
+      {"title": "Introductions & context", "start": "0:00", "bullets": ["Daniel (VP Operations) and Sofia (Customer Success) lead a 200-person org across dispatch, account management and support.", "Sofia's team runs roughly 400 customer calls a week."]},
+      {"title": "Pain points", "start": "0:41", "bullets": ["Inconsistent notes; account handoffs lose context.", "A renewal was lost because a verbal discount commitment never reached the CRM.", "Long weekly carrier reviews with no notetaker lead to repeated discussions."]},
+      {"title": "Current stack & integrations", "start": "1:39", "bullets": ["Zoom, Google Meet, HubSpot and Slack, all supported natively.", "Custom note templates for renewals (pricing, commitments, risks) and topic trackers for discount or cancellation mentions."]},
+      {"title": "Security requirements", "start": "2:42", "bullets": ["IT will ask about data storage and retention controls.", "SOC 2 Type II, GDPR, encryption and per-workspace retention covered; Okta SSO on the Business plan."]},
+      {"title": "Timeline, pilot & success criteria", "start": "3:22", "bullets": ["Budget approved this quarter; November pilot, January rollout.", "Success means commitments logged in HubSpot within an hour, and carrier review decisions auto-posted to Slack."]},
+      {"title": "Pricing & next steps", "start": "4:24", "bullets": ["Volume-tier proposal with pilot pricing that converts to an annual contract.", "Follow-up booked for next Tuesday to review the proposal."]}
+    ]
+  },
+  "action_items": [
+    {"text": "Send security package and data processing agreement to Northwind", "assignee": "Hannah Brooks", "at": "2:52"},
+    {"text": "Prepare volume-tier proposal with pilot pricing by Friday", "assignee": "Hannah Brooks", "at": "4:24"},
+    {"text": "Send the procurement vendor questionnaire", "assignee": "Daniel Ortiz", "at": "4:38", "done": true},
+    {"text": "Set up sandbox workspace with HubSpot integration and renewal call template", "assignee": "Alex Rivera", "at": "5:01"},
+    {"text": "Select the 15 pilot users and share the list", "assignee": "Sofia Romero", "at": "5:09"},
+    {"text": "Schedule follow-up for next Tuesday to review the proposal", "assignee": "Hannah Brooks", "at": "5:15", "done": true}
+  ]
+}

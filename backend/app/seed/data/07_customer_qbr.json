@@ -1,0 +1,46 @@
+{
+  "title": "Brightwave Media — Quarterly Business Review",
+  "days_ago": 12,
+  "time": "13:00",
+  "source": "upload",
+  "channel": "Sales",
+  "tags": ["customer", "qbr"],
+  "participants": [
+    {"name": "Olivia Grant", "email": "olivia.grant@brightwave.tv"},
+    {"name": "Hannah Brooks", "email": "hannah@nimbus.io"}
+  ],
+  "segments": [
+    ["0:00", "Hannah Brooks", "Hi Olivia, thanks for joining the quarterly review. Alex is here from product as well. We'll cover your usage, what's working, what isn't, and plans for next quarter."],
+    ["0:11", "Olivia Grant", "Great, thanks both. Overall the team is happy, but I do have a couple of concerns I want to raise."],
+    ["0:18", "Hannah Brooks", "Absolutely. Let's start with usage. Your team recorded just over two thousand meetings last quarter, up forty percent, and a hundred and sixty of your hundred and eighty seats are active weekly."],
+    ["0:31", "Olivia Grant", "That matches what I see. The editorial team uses it for every pitch meeting now. Being able to search across six months of pitch meetings for a topic has been a game changer."],
+    ["0:43", "Alex Rivera", "That's great to hear. What are the concerns?"],
+    ["0:46", "Olivia Grant", "Two things. First, transcript accuracy on our podcast recordings. When there's background music, speaker detection gets confused and sometimes merges two hosts into one speaker."],
+    ["1:00", "Alex Rivera", "That's a known weakness with overlapping audio. We're shipping speaker label editing next month, which will let your team fix those quickly, and we're improving diarization for music beds in Q1. Could you share a few example recordings so we can add them to our test set?"],
+    ["1:17", "Olivia Grant", "Yes, I can send five or six examples this week."],
+    ["1:21", "Olivia Grant", "The second concern is pricing. Our renewal is in December, and finance is asking us to cut costs by fifteen percent across all tools."],
+    ["1:30", "Hannah Brooks", "Understood. Twenty of your seats are inactive, so right-sizing to a hundred and sixty seats would get you most of the way there. We could also look at a two-year term, which comes with an additional discount."],
+    ["1:44", "Olivia Grant", "A two-year term might work if we can lock in the price. I'd need to check with finance."],
+    ["1:50", "Hannah Brooks", "I'll put together two options, a one-year at a hundred and sixty seats and a two-year at a hundred and eighty with a locked price, so you can take both to finance."],
+    ["2:01", "Olivia Grant", "That would be helpful. Also, can we get the podcast team on the video recording feature? They want to clip highlights for social media."],
+    ["2:09", "Alex Rivera", "Yes, soundbites would be perfect for that. You can clip any part of a recording and share it as a link or download it. I'll enable it for your workspace today and send a short guide."],
+    ["2:20", "Olivia Grant", "Perfect. I think that covers everything from my side."],
+    ["2:24", "Hannah Brooks", "Great. To recap: you'll send sample podcast recordings, I'll send two renewal options, and Alex enables soundbites. Let's check in again in three weeks before the renewal conversation."]
+  ],
+  "summary": {
+    "overview": "Brightwave Media's quarterly review showed strong adoption: just over 2,000 meetings recorded (up 40%), 160 of 180 seats active weekly, and editorial using cross-meeting search for every pitch meeting. Olivia raised two concerns. Speaker detection merges hosts when podcasts have background music; speaker editing ships next month and better diarization is planned for Q1. Finance also wants a 15% cost reduction before the December renewal. Hannah will propose a 160-seat one-year option and a 180-seat two-year option with a locked price, and Alex will enable soundbites for the podcast team.",
+    "keywords": ["Renewal", "Usage", "Speaker Detection", "Pricing", "Soundbites", "Podcast", "Diarization"],
+    "chapters": [
+      {"title": "Usage review", "start": "0:18", "bullets": ["2,000+ meetings recorded last quarter, up 40%; 160 of 180 seats active.", "Cross-meeting search for pitch meetings is a standout use case."]},
+      {"title": "Transcript accuracy concern", "start": "0:46", "bullets": ["Background music causes two podcast hosts to merge into one speaker.", "Speaker label editing ships next month; diarization improvements are planned for Q1."]},
+      {"title": "Renewal & pricing", "start": "1:21", "bullets": ["Finance is requesting a 15% cost cut before the December renewal.", "Options: right-size to 160 seats on a one-year term, or 180 seats on a two-year term with a locked price."]},
+      {"title": "Soundbites for podcast team", "start": "2:01", "bullets": ["The podcast team wants to clip highlights for social media; soundbites will be enabled with a guide."]}
+    ]
+  },
+  "action_items": [
+    {"text": "Send 5–6 sample podcast recordings with background music", "assignee": "Olivia Grant", "at": "1:17"},
+    {"text": "Prepare two renewal options (1-year/160 seats, 2-year/180 seats locked price)", "assignee": "Hannah Brooks", "at": "1:50"},
+    {"text": "Enable soundbites for Brightwave and send a short guide", "assignee": "Alex Rivera", "at": "2:09", "done": true},
+    {"text": "Book a check-in three weeks before the renewal conversation", "assignee": "Hannah Brooks", "at": "2:24"}
+  ]
+}

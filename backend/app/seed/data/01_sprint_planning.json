@@ -1,0 +1,65 @@
+{
+  "title": "Sprint 42 Planning",
+  "days_ago": 0,
+  "time": "10:00",
+  "source": "notetaker",
+  "channel": "Engineering",
+  "tags": ["sprint", "engineering"],
+  "participants": [
+    {"name": "Priya Shah", "email": "priya@nimbus.io"},
+    {"name": "Marcus Lee", "email": "marcus@nimbus.io"},
+    {"name": "Jenna Kim", "email": "jenna@nimbus.io"}
+  ],
+  "segments": [
+    ["0:00", "Alex Rivera", "Morning everyone. Let's get started with sprint 42 planning. We have about thirty minutes, so I'd like to review what carried over, agree on the sprint goal, and then size the new tickets."],
+    ["0:14", "Priya Shah", "Sounds good. Quick note before we start, the release from last sprint went out yesterday afternoon and error rates are flat, so nothing urgent from my side."],
+    ["0:27", "Alex Rivera", "Great news. So carry-over first. We have three tickets that didn't close: the calendar sync retry logic, the transcript export to PDF, and the flaky search integration test."],
+    ["0:44", "Marcus Lee", "The calendar sync one is basically done. The code is in review, I just need Priya to take a look at the backoff changes. I'd estimate half a day to land it."],
+    ["0:58", "Priya Shah", "I can review that today. I'll look at the exponential backoff and the jitter config right after this meeting."],
+    ["1:12", "Jenna Kim", "The PDF export is the bigger problem. The rendering library we picked doesn't handle long transcripts well. Anything over two hours runs out of memory on the worker."],
+    ["1:31", "Alex Rivera", "How long would it take to switch to streaming the PDF instead of building it in memory?"],
+    ["1:39", "Jenna Kim", "Probably three days. The library supports a streaming writer, but we'd have to rewrite how we paginate speaker blocks. I think it's worth it because customers keep asking for export."],
+    ["2:02", "Marcus Lee", "Agreed. Support had eleven tickets about export last month alone."],
+    ["2:10", "Alex Rivera", "Okay, let's keep PDF export in the sprint and treat it as a priority. Jenna, you own it. What about the flaky search test?"],
+    ["2:22", "Priya Shah", "That test depends on the indexing job finishing before the assertion runs. We need to wait on the index refresh instead of sleeping for two seconds. It's a small fix, maybe two hours."],
+    ["2:41", "Alex Rivera", "Perfect. Now for the sprint goal. I'd like this sprint to be about reliability for long meetings. That covers the PDF export, the transcript pagination bug, and the player memory leak on the meeting page."],
+    ["3:05", "Marcus Lee", "I like that framing. It gives us a clear story for the release notes too."],
+    ["3:12", "Jenna Kim", "Can we also include the speaker label editing? Design finished the mocks last week and it's a frequent request."],
+    ["3:24", "Alex Rivera", "Let's size it first and see if it fits. Let's go through the new tickets. First one is the transcript pagination bug, where segments after the first thousand don't load."],
+    ["3:41", "Priya Shah", "I looked at that. The API caps the page size at a thousand and the client never requests the next page. Fixing the client is easy, but we should also add a cursor so we stop using offsets on huge transcripts. I'd call it five points."],
+    ["4:05", "Marcus Lee", "Five feels right. I'm happy to pair on the cursor part."],
+    ["4:12", "Alex Rivera", "Okay, five points, Priya owns it with Marcus pairing. Next is the player memory leak."],
+    ["4:20", "Marcus Lee", "I reproduced it on Friday. Every time you seek, we attach a new time update listener and never remove it. After a few hundred seeks the tab gets sluggish. It's a three-pointer, and I'll take it."],
+    ["4:41", "Alex Rivera", "Great. And the speaker label editing Jenna mentioned?"],
+    ["4:47", "Jenna Kim", "The frontend is about five points. Backend needs a new endpoint to reassign a segment to a different speaker and recompute talk time, so maybe another three."],
+    ["5:05", "Priya Shah", "If I'm on pagination and reviewing calendar sync, I don't think I can take the backend part this sprint."],
+    ["5:14", "Alex Rivera", "Okay, let's check capacity. We have about thirty-four points available given Marcus is out on Friday. Carry-over is roughly six, PDF export is eight, pagination five, memory leak three, and the search test is one. That's twenty-three."],
+    ["5:42", "Marcus Lee", "So eleven points left. Speaker editing at eight would fit, but leaves no buffer."],
+    ["5:51", "Alex Rivera", "I'd rather keep some buffer for incidents. Let's pull in only the backend endpoint for speaker editing this sprint, three points, and do the UI next sprint. Marcus, could you take the endpoint after the memory leak?"],
+    ["6:12", "Marcus Lee", "Yes, I can take that. I'll write up the API contract by Wednesday so Jenna can review it before starting the UI."],
+    ["6:24", "Jenna Kim", "That works for me. I'll send design the questions about the edit menu so the mocks are final by next sprint."],
+    ["6:36", "Alex Rivera", "Last thing. Demo day is next Thursday. I'd like each of you to show one thing. Jenna the PDF export, Marcus the player fix, and Priya the pagination change with a three-hour meeting."],
+    ["6:55", "Priya Shah", "Sounds good. I'll prepare a long test meeting with seeded data so the demo is reliable."],
+    ["7:05", "Alex Rivera", "Great. To recap, the sprint goal is reliability for long meetings. I'll update the board and post the sprint goal in the engineering channel this afternoon. Thanks everyone."]
+  ],
+  "summary": {
+    "overview": "The team planned Sprint 42 around a single goal: reliability for long meetings. Carry-over work (calendar sync retries, PDF export and a flaky search test) stays in the sprint, with PDF export rewritten to stream pages instead of building them in memory. New work covers the transcript pagination bug, the player memory leak and the backend endpoint for speaker label editing, for 26 of the 34 available points so there is room for incidents. Each engineer will demo one item at next Thursday's demo day.",
+    "keywords": ["Sprint Goal", "PDF Export", "Pagination", "Memory Leak", "Speaker Editing", "Capacity", "Demo Day"],
+    "chapters": [
+      {"title": "Carry-over review", "start": "0:27", "bullets": ["Calendar sync retry logic is in review and needs half a day to land.", "PDF export runs out of memory on transcripts longer than two hours; switching to a streaming writer will take about three days.", "Support logged eleven export tickets last month, so export stays a priority."]},
+      {"title": "Sprint goal", "start": "2:41", "bullets": ["Goal set as reliability for long meetings: PDF export, transcript pagination and the player memory leak.", "The framing also gives a clear story for the release notes."]},
+      {"title": "Sizing new tickets", "start": "3:24", "bullets": ["Transcript pagination: 5 points, adds a cursor instead of offsets (Priya, pairing with Marcus).", "Player memory leak from time update listeners that are never removed on seek: 3 points (Marcus).", "Speaker label editing estimated at 5 points frontend plus 3 points backend."]},
+      {"title": "Capacity & scope", "start": "5:14", "bullets": ["34 points available because Marcus is out Friday; committed work comes to 23 points.", "Only the speaker-editing backend endpoint comes in this sprint; the UI moves to next sprint."]},
+      {"title": "Demo day plan", "start": "6:36", "bullets": ["Jenna demos PDF export, Marcus the player fix and Priya pagination on a three-hour meeting.", "Alex will update the board and post the sprint goal in the engineering channel."]}
+    ]
+  },
+  "action_items": [
+    {"text": "Review Marcus's calendar sync backoff and jitter changes", "assignee": "Priya Shah", "at": "0:58", "done": true},
+    {"text": "Rewrite PDF export to use the streaming writer for long transcripts", "assignee": "Jenna Kim", "at": "2:10"},
+    {"text": "Fix the flaky search integration test by waiting on index refresh", "assignee": "Priya Shah", "at": "2:22"},
+    {"text": "Write the API contract for the speaker reassignment endpoint by Wednesday", "assignee": "Marcus Lee", "at": "6:12"},
+    {"text": "Send design open questions about the speaker edit menu", "assignee": "Jenna Kim", "at": "6:24"},
+    {"text": "Prepare a seeded three-hour meeting for the demo day pagination demo", "assignee": "Priya Shah", "at": "6:55"},
+    {"text": "Update the sprint board and post the sprint goal in #engineering", "assignee": "Alex Rivera", "at": "7:05", "done": true}
+  ]
+}

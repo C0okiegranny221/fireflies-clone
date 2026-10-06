@@ -1,0 +1,52 @@
+{
+  "title": "Alex / Priya — Weekly 1:1",
+  "days_ago": 2,
+  "time": "14:00",
+  "source": "notetaker",
+  "channel": null,
+  "tags": ["1:1"],
+  "participants": [
+    {"name": "Priya Shah", "email": "priya@nimbus.io"}
+  ],
+  "segments": [
+    ["0:00", "Alex Rivera", "Hey Priya, how's your week going so far?"],
+    ["0:04", "Priya Shah", "Pretty good, honestly. Busy, but a good kind of busy. The release went smoothly, which was a relief after last time."],
+    ["0:13", "Alex Rivera", "It really did. The rollback plan you wrote was a big part of that. I shared it with the platform team as an example of how to do it."],
+    ["0:23", "Priya Shah", "Thanks, that means a lot. I wanted to talk about two things today: my growth plan and the on-call rotation."],
+    ["0:31", "Alex Rivera", "Sure, let's start with the growth plan. Last time you mentioned wanting to move toward a tech lead role."],
+    ["0:38", "Priya Shah", "Yes. I've been thinking about it more, and I want to lead the search infrastructure project next quarter. I know the indexing code better than anyone, and I have ideas for moving to incremental indexing."],
+    ["0:53", "Alex Rivera", "I think that's a great fit. The thing I'd want to see is you driving the design review and getting buy-in from the platform team, not just writing the code."],
+    ["1:04", "Priya Shah", "That makes sense. I've never run a design review on my own, though. Is there a template we use?"],
+    ["1:11", "Alex Rivera", "There is. I'll send you the design doc template and two good examples from last year. I'd suggest drafting the doc by the end of the month so we can review it together before it goes wider."],
+    ["1:24", "Priya Shah", "Okay, I'll aim to have a first draft by the twenty-eighth."],
+    ["1:29", "Alex Rivera", "Great. And I'll talk to Marcus about pairing with you on it, since he built the original search service."],
+    ["1:36", "Priya Shah", "That would be really helpful. Now the on-call rotation. I've been paged four times in the last two weeks, and three were for the same alert on the transcript queue."],
+    ["1:49", "Alex Rivera", "That's too many. Is the alert actually useful or is it noise?"],
+    ["1:54", "Priya Shah", "Mostly noise. It fires when the queue depth goes above fifty, but the queue always drains on its own within ten minutes. I think we should alert on queue age instead of depth."],
+    ["2:08", "Alex Rivera", "I agree. Can you open a ticket to change the alert to queue age, and we'll put it in next sprint? I'll also bring it up at the reliability review on Thursday."],
+    ["2:18", "Priya Shah", "Will do. And honestly, I'd like to swap out of on-call for the week of the twentieth because I'm traveling for a conference."],
+    ["2:26", "Alex Rivera", "No problem. Which conference?"],
+    ["2:29", "Priya Shah", "It's a search and retrieval conference in Berlin. I'm hoping to learn more about hybrid search for the indexing project."],
+    ["2:37", "Alex Rivera", "That's perfect timing. Please write up a short summary of what you learn when you get back, and maybe share it at the engineering guild meeting. I'll handle the on-call swap with Jenna."],
+    ["2:48", "Priya Shah", "Sounds good. That's everything on my list."],
+    ["2:52", "Alex Rivera", "One thing from me. Your peer feedback this cycle was excellent, especially around code reviews. Keep doing what you're doing. Talk next week."]
+  ],
+  "summary": {
+    "overview": "Alex and Priya discussed Priya's growth toward a tech lead role and on-call load. Priya will lead the search infrastructure project next quarter, focused on incremental indexing, and will run her first design review with a draft due on the 28th. Three of her four recent pages came from a noisy queue-depth alert, and the team agreed to switch it to queue age. Priya is swapping out of on-call while she attends a search conference in Berlin.",
+    "keywords": ["Growth Plan", "Tech Lead", "Search Infrastructure", "Design Review", "On-call", "Alerting", "Conference"],
+    "chapters": [
+      {"title": "Release retro", "start": "0:00", "bullets": ["The release went smoothly; Priya's rollback plan was shared with the platform team as an example."]},
+      {"title": "Growth plan", "start": "0:31", "bullets": ["Priya wants to lead the search infrastructure project and move to incremental indexing.", "The expectation is to drive the design review and get platform buy-in, not only to write code.", "First design doc draft is due on the 28th; Marcus may pair with her."]},
+      {"title": "On-call load", "start": "1:36", "bullets": ["Four pages in two weeks; three came from the transcript queue depth alert.", "The queue drains on its own within 10 minutes, so the alert should track queue age instead."]},
+      {"title": "Conference & feedback", "start": "2:18", "bullets": ["Priya is attending a search and retrieval conference in Berlin and swapping out of on-call that week.", "Her peer feedback was excellent, especially on code reviews."]}
+    ]
+  },
+  "action_items": [
+    {"text": "Send Priya the design doc template and two example docs", "assignee": "Alex Rivera", "at": "1:11", "done": true},
+    {"text": "Draft the search infrastructure design doc by the 28th", "assignee": "Priya Shah", "at": "1:24"},
+    {"text": "Ask Marcus to pair with Priya on the search project", "assignee": "Alex Rivera", "at": "1:29"},
+    {"text": "Open a ticket to switch the transcript queue alert from depth to age", "assignee": "Priya Shah", "at": "2:08"},
+    {"text": "Arrange the on-call swap with Jenna for the week of the 20th", "assignee": "Alex Rivera", "at": "2:37"},
+    {"text": "Share conference learnings at the engineering guild meeting", "assignee": "Priya Shah", "at": "2:37"}
+  ]
+}

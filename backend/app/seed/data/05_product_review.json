@@ -1,0 +1,56 @@
+{
+  "title": "Product Review: Mobile Onboarding Redesign",
+  "days_ago": 5,
+  "time": "16:00",
+  "source": "notetaker",
+  "channel": "Product",
+  "tags": ["product", "design", "mobile"],
+  "participants": [
+    {"name": "Lena Fischer", "email": "lena@nimbus.io"},
+    {"name": "Jenna Kim", "email": "jenna@nimbus.io"},
+    {"name": "Marcus Lee", "email": "marcus@nimbus.io"}
+  ],
+  "segments": [
+    ["0:00", "Alex Rivera", "Okay, let's kick off the product review for the mobile onboarding redesign. Lena, do you want to walk us through where things are?"],
+    ["0:07", "Lena Fischer", "Sure. Quick recap of the problem: only thirty-eight percent of new mobile users connect a calendar during onboarding, and users who don't connect a calendar are four times more likely to churn in the first week."],
+    ["0:23", "Marcus Lee", "Four times is huge. Do we know where people drop off?"],
+    ["0:27", "Lena Fischer", "Yes. The biggest drop is on the permissions screen. We ask for calendar, microphone and notifications all at once, before the user has seen any value. About forty percent of people abandon right there."],
+    ["0:43", "Alex Rivera", "So what's the proposal?"],
+    ["0:46", "Lena Fischer", "Three changes. First, we show a sample meeting with a real-looking transcript and summary before asking for anything. Second, we ask for calendar access only, with a clear explanation, and defer microphone and notifications until they're actually needed. Third, we cut the sign-up form from six fields down to two."],
+    ["1:08", "Jenna Kim", "I love the sample meeting idea. Is it interactive, or just a static screenshot?"],
+    ["1:13", "Lena Fischer", "Interactive. You can tap a line in the transcript and the audio jumps to that moment, and you can tap an action item to see where it was mentioned. We tested a prototype with eight users, and seven of them said that's when they understood the product."],
+    ["1:30", "Marcus Lee", "From an engineering standpoint, the sample meeting is mostly static data, so it's cheap. The deferred permissions are trickier because the microphone prompt currently happens at app launch, and moving it changes the recording flow."],
+    ["1:46", "Alex Rivera", "How much work is it to move the microphone prompt?"],
+    ["1:50", "Marcus Lee", "About a week. We'd trigger the prompt the first time someone taps record, and handle the denied state gracefully with a settings deep link."],
+    ["2:02", "Jenna Kim", "On the web side, we'd need to make sure onboarding state syncs, so someone who starts on mobile and continues on desktop doesn't see onboarding twice."],
+    ["2:12", "Alex Rivera", "Good catch. Let's make that a requirement. What are we measuring to know this worked?"],
+    ["2:18", "Lena Fischer", "The primary metric is calendar connection rate during onboarding, and we're aiming to go from thirty-eight to fifty-five percent. The secondary metric is week-one retention. We'll also watch the microphone permission grant rate to make sure deferring it doesn't hurt."],
+    ["2:37", "Marcus Lee", "Can we run it as an A/B test instead of a full rollout? I'd like to know the impact of each change separately if possible."],
+    ["2:45", "Lena Fischer", "Testing each change separately would need a lot of traffic. I'd suggest testing the full redesign against the control first, and then iterating on individual pieces."],
+    ["2:56", "Alex Rivera", "I agree with Lena. Let's do a fifty-fifty test of the whole flow for two weeks. If we hit significance earlier, great."],
+    ["3:05", "Jenna Kim", "What about accessibility? The sample meeting has a lot of motion."],
+    ["3:10", "Lena Fischer", "Good point. We'll respect the reduced motion setting and make sure the transcript is fully readable with a screen reader. I'll add that to the spec."],
+    ["3:19", "Alex Rivera", "Great. So decisions: we go ahead with the redesign, run a fifty-fifty test for two weeks, defer the microphone prompt to first record, and sync onboarding state across devices. Lena, can you finalize the spec by Monday?"],
+    ["3:33", "Lena Fischer", "Yes, I'll have the final spec and the accessibility notes by Monday."],
+    ["3:38", "Marcus Lee", "I'll start on the permission flow changes next sprint and set up the experiment flags."],
+    ["3:44", "Jenna Kim", "And I'll handle the cross-device onboarding sync on the web side."],
+    ["3:49", "Alex Rivera", "Perfect, thanks everyone. Great work, Lena, the research here was really convincing."]
+  ],
+  "summary": {
+    "overview": "The team reviewed Lena's mobile onboarding redesign. Only 38% of new mobile users connect a calendar, those who don't are four times more likely to churn in week one, and 40% drop off at a screen that asks for every permission at once. The redesign shows an interactive sample meeting first, asks only for calendar access up front, defers the microphone prompt to the first recording, and cuts sign-up from six fields to two. The team approved a 50/50 test of the full flow for two weeks, targeting a 55% calendar connection rate, with cross-device onboarding sync and accessibility as requirements.",
+    "keywords": ["Onboarding", "Calendar Connection", "Permissions", "Sample Meeting", "A/B Test", "Accessibility", "Retention"],
+    "chapters": [
+      {"title": "Problem & drop-off data", "start": "0:07", "bullets": ["38% calendar connection rate; users who don't connect churn 4x more in week one.", "40% of users abandon on the combined permissions screen."]},
+      {"title": "Proposed redesign", "start": "0:43", "bullets": ["Interactive sample meeting before any permission asks; 7 of 8 test users said it made the product click.", "Calendar-only permission up front; microphone and notifications deferred.", "Sign-up form reduced from six fields to two."]},
+      {"title": "Engineering considerations", "start": "1:30", "bullets": ["The sample meeting is cheap because it's static data; moving the mic prompt to the first recording takes about a week.", "Onboarding state must sync across mobile and web."]},
+      {"title": "Metrics & experiment design", "start": "2:12", "bullets": ["Primary: calendar connection rate from 38% to 55%. Secondary: week-one retention and mic grant rate.", "Run a 50/50 test of the full flow for two weeks before testing pieces individually."]},
+      {"title": "Accessibility & decisions", "start": "3:05", "bullets": ["Respect reduced motion and keep the sample transcript readable with screen readers.", "Redesign approved, with owners assigned for the spec, the permission flow and cross-device sync."]}
+    ]
+  },
+  "action_items": [
+    {"text": "Finalize onboarding spec including accessibility notes by Monday", "assignee": "Lena Fischer", "at": "3:33"},
+    {"text": "Move the microphone permission prompt to first record and set up experiment flags", "assignee": "Marcus Lee", "at": "3:38"},
+    {"text": "Implement cross-device onboarding state sync on web", "assignee": "Jenna Kim", "at": "3:44"},
+    {"text": "Configure 50/50 experiment for two weeks and share the results dashboard", "assignee": "Alex Rivera", "at": "2:56"}
+  ]
+}

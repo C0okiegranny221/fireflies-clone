@@ -1,0 +1,53 @@
+{
+  "title": "October All-Hands",
+  "days_ago": 8,
+  "time": "17:00",
+  "source": "notetaker",
+  "channel": null,
+  "tags": ["all-hands", "company"],
+  "participants": [
+    {"name": "Sam Patel", "email": "sam@nimbus.io"},
+    {"name": "Hannah Brooks", "email": "hannah@nimbus.io"},
+    {"name": "Lena Fischer", "email": "lena@nimbus.io"},
+    {"name": "Priya Shah", "email": "priya@nimbus.io"},
+    {"name": "Marcus Lee", "email": "marcus@nimbus.io"},
+    {"name": "Jenna Kim", "email": "jenna@nimbus.io"}
+  ],
+  "segments": [
+    ["0:00", "Sam Patel", "Hi everyone, welcome to the October all-hands. We've got company metrics, updates from sales and product, a quick engineering highlight, and open Q&A at the end."],
+    ["0:12", "Sam Patel", "Starting with the numbers. We closed Q3 at a hundred and twelve percent of our revenue target, and net revenue retention is at a hundred and eighteen percent. That's the best quarter in the company's history, so thank you all."],
+    ["0:29", "Sam Patel", "Weekly active teams grew twenty-two percent quarter over quarter, and the biggest driver was the new AI summary templates that shipped in August."],
+    ["0:41", "Hannah Brooks", "On the sales side, we signed fourteen new mid-market customers in September, including two logistics companies, which is a new vertical for us. Our pipeline for Q4 is the strongest it's ever been, with Northwind Logistics as one of the largest opportunities."],
+    ["0:59", "Hannah Brooks", "The common thread in every deal is the CRM integration. Customers want commitments from calls to land in HubSpot or Salesforce automatically. So a huge thanks to the integrations team."],
+    ["1:12", "Sam Patel", "Thanks Hannah. Lena, product update?"],
+    ["1:16", "Lena Fischer", "Sure. Three big things this quarter. The mobile onboarding redesign, which goes into an A/B test in two weeks. Speaker label editing, which is our most requested feature. And AskFred improvements, so you can ask questions across all your meetings, not just one."],
+    ["1:35", "Lena Fischer", "We're also starting research on a Spanish and Portuguese transcript quality push, since Latin America is now our fastest-growing region."],
+    ["1:45", "Sam Patel", "Priya, I hear you have an engineering highlight."],
+    ["1:48", "Priya Shah", "Yes. Last sprint we cut search latency for large workspaces from about nine hundred milliseconds to under two hundred by moving to incremental indexing for new transcripts. Customers with over ten thousand meetings will feel the biggest difference."],
+    ["2:05", "Sam Patel", "That's fantastic. Okay, a few company announcements. First, we're opening a hub in Lisbon in January, and we're hiring across engineering and customer success there. Please refer people."],
+    ["2:18", "Sam Patel", "Second, the annual planning offsite is November fourteenth and fifteenth. Leads, please submit your team's draft goals by November first."],
+    ["2:29", "Sam Patel", "And third, we're moving to a new benefits provider on January first. People Ops will host two information sessions next week."],
+    ["2:39", "Sam Patel", "Let's open it up for questions. Marcus, I see your hand."],
+    ["2:42", "Marcus Lee", "Thanks. With the Lisbon hub, will the engineering teams there own specific product areas, or be spread across existing teams?"],
+    ["2:50", "Sam Patel", "Great question. The plan is for Lisbon to own integrations end to end, with a few people embedded in other teams for knowledge transfer during the first quarter."],
+    ["3:01", "Jenna Kim", "Is there a plan to keep all-hands friendly to time zones once we have the Lisbon team?"],
+    ["3:07", "Sam Patel", "Yes. We'll alternate the all-hands time each month, and every all-hands is recorded with summaries and action items posted in the announcements channel, so nobody misses anything."],
+    ["3:19", "Sam Patel", "That's all the time we have. Thanks everyone, and congratulations on a record quarter."]
+  ],
+  "summary": {
+    "overview": "Sam opened the October all-hands with record Q3 results: 112% of the revenue target, 118% net revenue retention, and 22% quarter-over-quarter growth in weekly active teams, driven by AI summary templates. Sales signed 14 mid-market customers, including a new logistics vertical, and CRM integration came up in every deal. The Q4 product focus is mobile onboarding, speaker label editing and cross-meeting AskFred. Engineering cut search latency from about 900ms to under 200ms. Announcements: a Lisbon hub opening in January, the planning offsite on Nov 14–15, and a new benefits provider from January 1.",
+    "keywords": ["Q3 Results", "Revenue", "CRM Integration", "Product Roadmap", "Search Latency", "Lisbon Hub", "Offsite"],
+    "chapters": [
+      {"title": "Company metrics", "start": "0:12", "bullets": ["Q3 closed at 112% of the revenue target with 118% NRR, a company record.", "Weekly active teams grew 22% QoQ, driven by AI summary templates."]},
+      {"title": "Sales update", "start": "0:41", "bullets": ["14 new mid-market customers in September, including two logistics companies.", "CRM integration is the common thread across deals."]},
+      {"title": "Product roadmap", "start": "1:16", "bullets": ["Q4 focus: mobile onboarding A/B test, speaker label editing, and AskFred across meetings.", "Research is starting on Spanish and Portuguese transcript quality for LATAM."]},
+      {"title": "Engineering highlight", "start": "1:48", "bullets": ["Incremental indexing cut search latency from ~900ms to under 200ms for large workspaces."]},
+      {"title": "Announcements & Q&A", "start": "2:05", "bullets": ["Lisbon hub opens in January and will own integrations end to end.", "Planning offsite on Nov 14–15; draft goals due Nov 1.", "All-hands times will alternate for time zones, and recordings will be posted."]}
+    ]
+  },
+  "action_items": [
+    {"text": "Submit team draft goals for the planning offsite by November 1", "assignee": "Alex Rivera", "at": "2:18"},
+    {"text": "Refer candidates for the Lisbon engineering and CS roles", "assignee": null, "at": "2:05"},
+    {"text": "Host two benefits information sessions next week", "assignee": "Sam Patel", "at": "2:29", "done": true}
+  ]
+}

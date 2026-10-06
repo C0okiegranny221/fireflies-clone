@@ -4,8 +4,12 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app import models  # noqa: F401  (registers all tables on Base.metadata)
 from app.config import settings
 from app.db import Base, engine
+from app.routers import action_items, lookups, meetings, transcripts
+
+API_PREFIX = "/api/v1"
 
 
 @asynccontextmanager
@@ -25,7 +29,10 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
-    @app.get("/api/v1/health", tags=["meta"])
+    for module in (meetings, transcripts, action_items, lookups):
+        app.include_router(module.router, prefix=API_PREFIX)
+
+    @app.get(f"{API_PREFIX}/health", tags=["meta"])
     def health() -> dict[str, str]:
         return {"status": "ok"}
 
