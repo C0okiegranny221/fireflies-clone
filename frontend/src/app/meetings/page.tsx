@@ -1,10 +1,15 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
-import { PageHeader } from "@/components/layout/PageHeader";
+import { MeetingsLibrary } from "@/components/meetings/MeetingsLibrary";
 
 export const metadata: Metadata = { title: "Meetings" };
 
-// Temporary stub — the full view lands in a later step.
-export default function Page() {
-  return <PageHeader title="Meetings" description="All of your recorded and uploaded meetings." />;
+export default function MeetingsPage() {
+  // Filters live in the URL (useSearchParams), which needs a Suspense boundary when prerendering.
+  return (
+    <Suspense>
+      <MeetingsLibrary />
+    </Suspense>
+  );
 }

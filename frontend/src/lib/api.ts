@@ -121,6 +121,7 @@ export const queryKeys = {
   tags: ["tags"] as const,
   meetings: ["meetings"] as const,
   meetingList: (q: MeetingQuery) => ["meetings", "list", q] as const,
+  meetingPages: (q: MeetingQuery) => ["meetings", "pages", q] as const,
   meeting: (id: number) => ["meetings", "detail", id] as const,
   transcript: (id: number) => ["meetings", "transcript", id] as const,
   tasks: (completed?: boolean) => ["tasks", completed ?? "all"] as const,

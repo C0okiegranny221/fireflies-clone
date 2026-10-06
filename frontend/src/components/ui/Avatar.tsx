@@ -46,7 +46,7 @@ export function AvatarStack({
   const shown = people.slice(0, max);
   const extra = people.length - shown.length;
   return (
-    <div className="flex items-center -space-x-1.5">
+    <div className="flex items-center -space-x-0.5">
       {shown.map((p) => (
         <Avatar
           key={p.id}
