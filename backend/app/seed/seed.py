@@ -75,6 +75,8 @@ def seed(db: Session) -> None:
     for data in meetings_data:
         hour, minute = map(int, data["time"].split(":"))
         started_at = datetime.combine(today - timedelta(days=data["days_ago"]), time(hour, minute))
+        # Keep "today" meetings in the past regardless of when the seed runs.
+        started_at = min(started_at, utcnow().replace(second=0, microsecond=0) - timedelta(hours=1))
         segments = _segments(data["segments"])
         meeting = svc.create_meeting(
             db,
