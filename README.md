@@ -2,7 +2,9 @@
 
 A full-stack clone of the [Fireflies.ai](https://fireflies.ai) meeting assistant: a meetings library, a "Notepad" meeting page where the **transcript, audio player and AI notes stay in sync**, action items, global search and an AskFred chat that cites the transcript.
 
-**Live demo:** _added after deployment_ · **Stack:** Next.js 16 (TypeScript) · FastAPI · SQLite
+**Live demo:** https://fireflies-clone-woad.vercel.app · **API docs:** https://fireflies-clone-api-0aet.onrender.com/docs · **Stack:** Next.js 16 (TypeScript) · FastAPI · SQLite
+
+> The API runs on Render's free tier and sleeps when idle, so the first load after a pause can take up to a minute.
 
 ![Meeting notepad](docs/screenshots/notepad.png)
 
@@ -239,5 +241,5 @@ Errors use FastAPI's `{"detail": ...}` shape with meaningful status codes: 404 f
 ## Deployment
 
 - **Backend → Render:** `render.yaml` blueprint. It seeds demo data on first boot and reads `CORS_ORIGINS` and `LLM_API_KEY` from the dashboard; secrets never go in git.
-- **Frontend → Vercel:** root directory `frontend`, env `NEXT_PUBLIC_API_URL=https://<render-service>.onrender.com/api/v1`.
+- **Frontend → Vercel:** the `frontend` folder is linked to the `fireflies-clone` project and deployed with `vercel deploy --prod`, with `NEXT_PUBLIC_API_URL=https://fireflies-clone-api-0aet.onrender.com/api/v1` set for production and preview builds. The backend's `CORS_ORIGIN_REGEX` admits the project's production and preview domains.
 - Free Render instances sleep when idle, so the first request after a pause can take up to a minute while the API wakes.
