@@ -10,6 +10,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { api, ApiError, queryKeys } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
+import { AskFredPanel } from "./AskFredPanel";
 import { IconRail } from "./IconRail";
 import { NotepadHeader } from "./NotepadHeader";
 import { PlayerBar } from "./PlayerBar";
@@ -56,6 +57,7 @@ export function MeetingView({ id, startMs = 0 }: { id: number; startMs?: number 
   const notesRef = useRef<HTMLDivElement>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [mobileTab, setMobileTab] = useState<"notes" | "transcript">("notes");
+  const [askOpen, setAskOpen] = useState(false);
 
   const meeting = meetingQuery.data;
   const segments = useMemo(() => transcriptQuery.data?.segments ?? [], [transcriptQuery.data]);
@@ -130,7 +132,7 @@ export function MeetingView({ id, startMs = 0 }: { id: number; startMs?: number 
     >
       <title>{`${meeting!.title} | Fireflies`}</title>
       <div className="flex h-full min-h-0 flex-col">
-        <NotepadHeader meeting={meeting!} />
+        <NotepadHeader meeting={meeting!} onAskFred={() => setAskOpen((open) => !open)} />
 
         {/* Below lg the two panels become tabs. */}
         <div className="flex shrink-0 border-b border-line bg-surface lg:hidden" role="tablist">
@@ -154,12 +156,14 @@ export function MeetingView({ id, startMs = 0 }: { id: number; startMs?: number 
           </button>
         </div>
 
-        <div className="flex min-h-0 flex-1">
+        <div className="relative flex min-h-0 flex-1">
           <IconRail onJump={jumpToSection} />
           <div
             ref={notesRef}
             className={cn(
               "relative min-h-0 overflow-y-auto border-line bg-surface lg:block lg:w-[44%] lg:max-w-2xl lg:border-r",
+              // Give the transcript room when AskFred takes the third column.
+              askOpen && "xl:w-[34%]",
               mobileTab === "notes" ? "block w-full" : "hidden",
             )}
           >
@@ -178,6 +182,14 @@ export function MeetingView({ id, startMs = 0 }: { id: number; startMs?: number 
               onQueryChange={setSearchQuery}
             />
           </div>
+          {askOpen && (
+            // A third column on wide screens; a sheet over the panels below xl.
+            <AskFredPanel
+              meetingId={id}
+              onClose={() => setAskOpen(false)}
+              className="absolute inset-y-0 right-0 z-20 w-full shadow-pop sm:w-96 xl:static xl:z-auto xl:shadow-none"
+            />
+          )}
         </div>
 
         <PlayerBar

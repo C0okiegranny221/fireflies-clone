@@ -45,6 +45,8 @@ export interface Summary {
   overview: string;
   keywords: string[];
   generated_by: SummarySource;
+  /** Provider/model for LLM summaries, e.g. "Groq · llama-3.3-70b-versatile". */
+  model: string | null;
   chapters: Chapter[];
   updated_at: string;
 }
@@ -99,6 +101,47 @@ export interface Transcript {
   meeting_id: number;
   segments: Segment[];
   match_segment_ids: number[];
+}
+
+export interface TranscriptHit {
+  segment_id: number;
+  start_ms: number;
+  speaker: string;
+  /** Excerpt with matches wrapped in [[ ]]. */
+  snippet: string;
+}
+
+export interface SearchResult {
+  meeting_id: number;
+  title: string;
+  started_at: string;
+  duration_sec: number;
+  matched_meeting: boolean;
+  hits: TranscriptHit[];
+}
+
+export interface ChatTurn {
+  role: "user" | "assistant";
+  content: string;
+}
+
+export interface Citation {
+  segment_id: number;
+  start_ms: number;
+  speaker: string;
+  text: string;
+}
+
+export interface AskResponse {
+  answer: string;
+  citations: Citation[];
+  source: "llm" | "retrieval";
+  model: string | null;
+}
+
+export interface AppInfo {
+  ai_enabled: boolean;
+  ai_model: string | null;
 }
 
 export interface Page<T> {

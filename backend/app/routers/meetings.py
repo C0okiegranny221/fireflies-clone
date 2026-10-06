@@ -4,12 +4,13 @@ from typing import Annotated
 
 from fastapi import APIRouter, File, Form, HTTPException, Query, Response, UploadFile, status
 
-from app.deps import CurrentUser, DbSession, MeetingDep
+from app.deps import CurrentUser, DbSession, LLMDep, MeetingDep
 from app.models import Channel, MeetingSource
 from app.schemas.common import Page
 from app.schemas.meeting import MeetingCreate, MeetingDetail, MeetingListItem, MeetingUpdate
 from app.schemas.summary import SummaryOut
 from app.serializers import meeting_detail, meeting_list_item
+from app.services import export_service
 from app.services import meeting_service as svc
 from app.services.transcript_parser import TranscriptParseError, parse_transcript
 
@@ -59,7 +60,9 @@ def list_meetings(
 
 
 @router.post("", response_model=MeetingDetail, status_code=status.HTTP_201_CREATED)
-def create_meeting(body: MeetingCreate, db: DbSession, user: CurrentUser) -> MeetingDetail:
+def create_meeting(
+    body: MeetingCreate, db: DbSession, user: CurrentUser, llm: LLMDep
+) -> MeetingDetail:
     _check_channel(db, body.channel_id)
     segments = []
     if body.transcript_text and body.transcript_text.strip():
@@ -77,6 +80,7 @@ def create_meeting(body: MeetingCreate, db: DbSession, user: CurrentUser) -> Mee
             channel_id=body.channel_id,
             tags=tuple(body.tags),
         ),
+        llm=llm.client() if segments else None,
     )
     db.commit()
     return meeting_detail(svc.get_meeting(db, meeting.id))
@@ -86,6 +90,7 @@ def create_meeting(body: MeetingCreate, db: DbSession, user: CurrentUser) -> Mee
 async def upload_meeting(
     db: DbSession,
     user: CurrentUser,
+    llm: LLMDep,
     file: Annotated[UploadFile, File(description=".txt, .vtt or .json transcript")],
     title: Annotated[str | None, Form()] = None,
     channel_id: Annotated[int | None, Form()] = None,
@@ -116,6 +121,7 @@ async def upload_meeting(
             segments=tuple(segments),
             channel_id=channel_id,
         ),
+        llm=llm.client(),
     )
     db.commit()
     return meeting_detail(svc.get_meeting(db, meeting.id))
@@ -149,6 +155,28 @@ def delete_meeting(meeting: MeetingDep, db: DbSession) -> Response:
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
+@router.get(
+    "/{meeting_id}/export",
+    response_class=Response,
+    responses={200: {"content": {"text/markdown": {}, "text/plain": {}}}},
+)
+def export_meeting(
+    meeting: MeetingDep,
+    fmt: Annotated[export_service.ExportFormat, Query(alias="format")] = "md",
+) -> Response:
+    """Download notes, action items and transcript as Markdown or plain text."""
+    media_type = "text/markdown" if fmt == "md" else "text/plain"
+    return Response(
+        export_service.render(meeting, fmt),
+        media_type=f"{media_type}; charset=utf-8",
+        headers={
+            "Content-Disposition": (
+                f'attachment; filename="{export_service.filename(meeting, fmt)}"'
+            )
+        },
+    )
+
+
 @router.get("/{meeting_id}/summary", response_model=SummaryOut)
 def get_summary(meeting: MeetingDep) -> SummaryOut:
     if meeting.summary is None:
@@ -157,9 +185,9 @@ def get_summary(meeting: MeetingDep) -> SummaryOut:
 
 
 @router.post("/{meeting_id}/summary/regenerate", response_model=SummaryOut)
-def regenerate_summary(meeting: MeetingDep, db: DbSession) -> SummaryOut:
+def regenerate_summary(meeting: MeetingDep, db: DbSession, llm: LLMDep) -> SummaryOut:
     try:
-        summary = svc.regenerate_summary(db, meeting)
+        summary = svc.regenerate_summary(db, meeting, llm.client())
     except ValueError as exc:
         raise HTTPException(status.HTTP_409_CONFLICT, str(exc)) from exc
     db.commit()

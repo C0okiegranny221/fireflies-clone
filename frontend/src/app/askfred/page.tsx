@@ -10,7 +10,7 @@ export default function Page() {
     <ComingSoon
       icon={Sparkles}
       title="AskFred"
-      description="Ask questions across all of your meetings and get answers with links to the exact moments."
+      description="Ask questions across all of your meetings at once. AskFred already works inside each meeting: open one and click AskFred."
       bullets={[
         '"What did we decide about pricing last week?"',
         '"Summarize every call with Northwind"',

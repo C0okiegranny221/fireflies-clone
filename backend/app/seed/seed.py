@@ -17,6 +17,7 @@ import app.models  # noqa: F401  (registers all tables)
 from app.db import Base, SessionLocal, engine
 from app.models import Channel, MeetingSource, SummarySource, User
 from app.models.base import utcnow
+from app.search_index import drop_search_index, ensure_search_index
 from app.services import meeting_service as svc
 from app.services.summarizer import ActionItemDraft, ChapterDraft, SummaryDraft
 from app.services.transcript_parser import MS_PER_WORD, ParsedSegment
@@ -105,14 +106,17 @@ def seed(db: Session) -> None:
 
 
 def reset_and_seed() -> None:
+    drop_search_index(engine)
     Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
+    ensure_search_index(engine)
     with SessionLocal() as db:
         seed(db)
 
 
 def seed_if_empty() -> bool:
     Base.metadata.create_all(bind=engine)
+    ensure_search_index(engine)
     with SessionLocal() as db:
         if db.scalar(select(User.id).limit(1)) is not None:
             return False

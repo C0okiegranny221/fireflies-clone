@@ -21,6 +21,7 @@ from app.models import (
     User,
 )
 from app.models.base import utcnow
+from app.services.llm import LLMClient
 from app.services.summarizer import SummaryDraft, summarize
 from app.services.transcript_parser import ParsedSegment
 
@@ -129,7 +130,7 @@ class NewMeeting:
     summary: SummaryDraft | None = None
 
 
-def create_meeting(db: Session, data: NewMeeting) -> Meeting:
+def create_meeting(db: Session, data: NewMeeting, llm: LLMClient | None = None) -> Meeting:
     speakers = [s.speaker for s in data.segments]
     people = get_or_create_participants(db, [data.host.name, *data.participants, *speakers])
     host_participant = people[data.host.name]
@@ -170,7 +171,7 @@ def create_meeting(db: Session, data: NewMeeting) -> Meeting:
 
     draft = data.summary
     if draft is None and data.segments:
-        draft = summarize(meeting.title, list(data.segments))
+        draft = summarize(meeting.title, list(data.segments), llm)
     if draft is not None:
         apply_summary(db, meeting, draft, include_action_items=True)
     return meeting
@@ -185,6 +186,7 @@ def apply_summary(
     summary.overview = draft.overview
     summary.keywords = draft.keywords
     summary.generated_by = draft.source
+    summary.model = draft.model
     summary.updated_at = utcnow()
     summary.chapters = [
         Chapter(title=c.title, start_ms=c.start_ms, bullets=c.bullets, position=i)
@@ -210,13 +212,13 @@ def apply_summary(
     return summary
 
 
-def regenerate_summary(db: Session, meeting: Meeting) -> Summary:
+def regenerate_summary(db: Session, meeting: Meeting, llm: LLMClient | None = None) -> Summary:
     segments = [
         ParsedSegment(s.speaker.name, s.text, s.start_ms, s.end_ms) for s in meeting.segments
     ]
     if not segments:
         raise ValueError("Meeting has no transcript to summarize")
-    draft = summarize(meeting.title, segments)
+    draft = summarize(meeting.title, segments, llm)
     return apply_summary(db, meeting, draft, include_action_items=False)
 
 

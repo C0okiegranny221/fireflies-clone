@@ -1,5 +1,8 @@
 import type {
   ActionItem,
+  AppInfo,
+  AskResponse,
+  ChatTurn,
   ActionItemCreate,
   ActionItemUpdate,
   Channel,
@@ -10,6 +13,7 @@ import type {
   MeetingUpdate,
   Page,
   Participant,
+  SearchResult,
   Segment,
   Summary,
   Tag,
@@ -72,6 +76,9 @@ export const api = {
   participants: () => request<Participant[]>("/participants"),
   channels: () => request<Channel[]>("/channels"),
   tags: () => request<Tag[]>("/tags"),
+  appInfo: () => request<AppInfo>("/app-info"),
+  search: (q: string) =>
+    request<{ query: string; results: SearchResult[] }>("/search", { query: { q } }),
 
   meetings: {
     list: (query: MeetingQuery = {}) =>
@@ -93,6 +100,14 @@ export const api = {
       request<Transcript>(`/meetings/${id}/transcript`, { query: { q } }),
     regenerateSummary: (id: number) =>
       request<Summary>(`/meetings/${id}/summary/regenerate`, { method: "POST" }),
+    ask: (id: number, question: string, history: ChatTurn[]) =>
+      request<AskResponse>(`/meetings/${id}/ask`, {
+        method: "POST",
+        body: json({ question, history }),
+      }),
+    /** Direct download URL (the API responds with Content-Disposition: attachment). */
+    exportUrl: (id: number, format: "md" | "txt") =>
+      `${BASE_URL}/meetings/${id}/export?format=${format}`,
   },
 
   segments: {
@@ -125,4 +140,6 @@ export const queryKeys = {
   meeting: (id: number) => ["meetings", "detail", id] as const,
   transcript: (id: number) => ["meetings", "transcript", id] as const,
   tasks: (completed?: boolean) => ["tasks", completed ?? "all"] as const,
+  appInfo: ["app-info"] as const,
+  search: (q: string) => ["search", q] as const,
 };

@@ -1,8 +1,9 @@
 """
 Generate meeting notes (overview, keywords, outline, action items) from a transcript.
 
-Uses Claude when ANTHROPIC_API_KEY is configured; otherwise — or if the API call fails —
-falls back to a deterministic heuristic so the app always works offline.
+Uses the configured LLM (see services/llm.py) when one is available to the request;
+otherwise, or if the call fails, falls back to a deterministic heuristic so the app always
+works offline.
 """
 
 import logging
@@ -10,11 +11,11 @@ import re
 from collections import Counter
 from dataclasses import dataclass, field
 
-import anthropic
-from pydantic import BaseModel, Field, ValidationError
+from pydantic import BaseModel, Field
 
-from app.config import settings
 from app.models import SummarySource
+from app.services.llm import LLMClient, LLMError
+from app.services.text import STOPWORDS, WORD_RE, term
 from app.services.transcript_parser import ParsedSegment
 
 log = logging.getLogger(__name__)
@@ -42,15 +43,17 @@ class SummaryDraft:
     action_items: list[ActionItemDraft]
     source: SummarySource
     speakers: list[str] = field(default_factory=list)
+    model: str | None = None
 
 
-def summarize(title: str, segments: list[ParsedSegment]) -> SummaryDraft:
-    if settings.anthropic_api_key:
+def summarize(
+    title: str, segments: list[ParsedSegment], llm: LLMClient | None = None
+) -> SummaryDraft:
+    if llm is not None:
         try:
-            if draft := _summarize_with_llm(title, segments):
-                return draft
-        except (anthropic.APIError, ValidationError):
-            log.exception("LLM summary failed; falling back to heuristic")
+            return _summarize_with_llm(title, segments, llm)
+        except LLMError:
+            log.warning("LLM summary failed; using heuristic", exc_info=True)
     return summarize_heuristic(title, segments)
 
 
@@ -84,36 +87,33 @@ _SYSTEM_PROMPT = (
 )
 
 
-def _summarize_with_llm(title: str, segments: list[ParsedSegment]) -> SummaryDraft | None:
-    client = anthropic.Anthropic(api_key=settings.anthropic_api_key)
+def _summarize_with_llm(title: str, segments: list[ParsedSegment], llm: LLMClient) -> SummaryDraft:
     transcript = "\n".join(f"[{_clock(s.start_ms or 0)}] {s.speaker}: {s.text}" for s in segments)
-    response = client.messages.parse(
-        model=settings.anthropic_model,
-        max_tokens=16000,
-        system=_SYSTEM_PROMPT,
-        messages=[
-            {"role": "user", "content": f"Meeting title: {title}\n\nTranscript:\n{transcript}"}
-        ],
-        output_format=_LLMSummary,
+    out = llm.complete_json(
+        _SYSTEM_PROMPT, f"Meeting title: {title}\n\nTranscript:\n{transcript}", _LLMSummary
     )
-    if response.stop_reason == "refusal" or response.parsed_output is None:
-        log.warning("LLM summary unavailable (stop_reason=%s)", response.stop_reason)
-        return None
+    speakers = {s.speaker for s in segments}
+    end_ms = max((s.end_ms or 0 for s in segments), default=0)
 
-    out = response.parsed_output
+    def clamp(seconds: int) -> int:
+        # Models occasionally return times past the end of the meeting.
+        return min(max(0, seconds * 1000), end_ms)
+
     return SummaryDraft(
         overview=out.overview,
         keywords=out.keywords[:8],
-        chapters=[ChapterDraft(c.title, c.start_seconds * 1000, c.bullets) for c in out.chapters],
+        chapters=[ChapterDraft(c.title, clamp(c.start_seconds), c.bullets) for c in out.chapters],
         action_items=[
             ActionItemDraft(
                 a.text,
-                a.assignee,
-                a.timestamp_seconds * 1000 if a.timestamp_seconds is not None else None,
+                # Only keep assignees who actually spoke; models sometimes invent names.
+                a.assignee if a.assignee in speakers else None,
+                clamp(a.timestamp_seconds) if a.timestamp_seconds is not None else None,
             )
             for a in out.action_items
         ],
         source=SummarySource.LLM,
+        model=llm.label,
     )
 
 
@@ -124,23 +124,6 @@ def _clock(ms: int) -> str:
 
 # --------------------------------------------------------------------- Heuristic
 
-_STOPWORDS = frozenset(
-    """a about above after again against all also am an and any are as at be because been
-    before being below between both but by can could did do does doing done down during each
-    else even ever every few for from further get gets getting go going gonna got had has
-    have having he her here hers him his how i if in into is it its itself just know let
-    like ll look make maybe me might more most much must my need no nor not now of off ok
-    okay on once one only or other our ours out over own pretty probably quite re really
-    right said same say see she should so some something sounds still such sure take than
-    thank thanks that the their them then there these they thing things think this those
-    though through to too um uh under until up us ve very want was way we well were what
-    when where which while who whom why will with would yeah yes yet you your yours great
-    good actually basically lot kind week weeks today tomorrow time folks guys everyone hey
-    hi first second third two three four five six seven eight nine ten twenty thirty forty
-    fifty hundred thousand next last many""".split()
-)
-# Words of 4+ letters, skipping contractions/possessives ("we'll", "Daniel's").
-_WORD = re.compile(r"\b[A-Za-z][A-Za-z\-]{3,}\b(?!')")
 _SENTENCE_SPLIT = re.compile(r"(?<=[.!?])\s+")
 _ACTION_CUE = re.compile(
     r"\b(I'll|I will|I'm going to|I can take|let me|we'll|we will|we need to|"
@@ -161,12 +144,12 @@ def summarize_heuristic(title: str, segments: list[ParsedSegment]) -> SummaryDra
     word_counts: Counter[str] = Counter()
     surface_forms: dict[str, Counter[str]] = {}
     for seg in segments:
-        for word in _WORD.findall(seg.text):
-            if word.lower() in _STOPWORDS or word.lower() in name_parts:
+        for word in WORD_RE.findall(seg.text):
+            if word.lower() in STOPWORDS or word.lower() in name_parts:
                 continue
-            term = _term(word)
-            word_counts[term] += 1
-            surface_forms.setdefault(term, Counter())[word] += 1
+            key = term(word)
+            word_counts[key] += 1
+            surface_forms.setdefault(key, Counter())[word] += 1
     keywords = [_display(surface_forms[t]) for t, _ in word_counts.most_common(8)]
     chapters = _heuristic_chapters(segments, word_counts, surface_forms)
     return SummaryDraft(
@@ -179,12 +162,6 @@ def summarize_heuristic(title: str, segments: list[ParsedSegment]) -> SummaryDra
     )
 
 
-def _term(word: str) -> str:
-    """Normalize a word so "Calls"/"call" count as one topic."""
-    w = word.lower()
-    return w[:-1] if len(w) > 4 and w.endswith("s") and not w.endswith("ss") else w
-
-
 def _display(forms: Counter[str]) -> str:
     """Show a term the way speakers wrote it most often ("HubSpot"), capitalized."""
     word = forms.most_common(1)[0][0]
@@ -192,7 +169,7 @@ def _display(forms: Counter[str]) -> str:
 
 
 def _score(sentence: str, word_counts: Counter[str]) -> float:
-    words = [_term(w) for w in _WORD.findall(sentence)]
+    words = [term(w) for w in WORD_RE.findall(sentence)]
     if len(words) < 4:
         return 0.0
     return sum(word_counts.get(w, 0) for w in words) / len(words) ** 0.5
@@ -234,7 +211,7 @@ def _heuristic_chapters(
     for i in range(0, len(segments), size):
         chunk = segments[i : i + size]
         local = Counter(
-            _term(w) for s in chunk for w in _WORD.findall(s.text) if _term(w) in word_counts
+            term(w) for s in chunk for w in WORD_RE.findall(s.text) if term(w) in word_counts
         )
         title_words = [_display(surface_forms[t]) for t, _ in local.most_common(2)]
         title_words = title_words or ["Discussion"]

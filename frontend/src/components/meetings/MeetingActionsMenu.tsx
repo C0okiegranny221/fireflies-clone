@@ -1,18 +1,44 @@
 "use client";
 
-import { ExternalLink, Link2, MoreHorizontal, Pencil, Share2, Trash2 } from "lucide-react";
+import {
+  Download,
+  ExternalLink,
+  FileText,
+  Link2,
+  MoreHorizontal,
+  Pencil,
+  Share2,
+  Trash2,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
 import { comingSoon } from "@/components/layout/comingSoon";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
-import { Menu, MenuContent, MenuItem, MenuSeparator, MenuTrigger } from "@/components/ui/Menu";
+import {
+  Menu,
+  MenuContent,
+  MenuItem,
+  MenuLabel,
+  MenuSeparator,
+  MenuTrigger,
+} from "@/components/ui/Menu";
 import { useMeetingMutations } from "@/hooks/useMeetingMutations";
+import { api } from "@/lib/api";
 import type { MeetingListItem } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 import { EditMeetingModal } from "./EditMeetingModal";
+
+/** The API answers with Content-Disposition: attachment, so navigating to it downloads. */
+function download(meetingId: number, format: "md" | "txt") {
+  const link = document.createElement("a");
+  link.href = api.meetings.exportUrl(meetingId, format);
+  link.rel = "noopener";
+  link.click();
+  toast.success(`Downloading ${format === "md" ? "Markdown" : "text"} export`);
+}
 
 /** The "⋯" menu for a meeting (list rows and the meeting page header). */
 export function MeetingActionsMenu({
@@ -69,6 +95,14 @@ export function MeetingActionsMenu({
           </MenuItem>
           <MenuItem icon={<Pencil />} onSelect={() => setEditing(true)}>
             Rename & edit
+          </MenuItem>
+          <MenuSeparator />
+          <MenuLabel>Download notes & transcript</MenuLabel>
+          <MenuItem icon={<Download />} onSelect={() => download(meeting.id, "md")}>
+            Markdown (.md)
+          </MenuItem>
+          <MenuItem icon={<FileText />} onSelect={() => download(meeting.id, "txt")}>
+            Plain text (.txt)
           </MenuItem>
           <MenuSeparator />
           <MenuItem icon={<Trash2 />} danger onSelect={() => setConfirming(true)}>

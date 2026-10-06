@@ -33,6 +33,8 @@ class Summary(TimestampMixin, Base):
     generated_by: Mapped[SummarySource] = mapped_column(
         Enum(SummarySource, native_enum=False, length=20)
     )
+    # Which provider/model wrote LLM summaries, e.g. "Groq · llama-3.3-70b-versatile".
+    model: Mapped[str | None] = mapped_column(String(120))
 
     meeting: Mapped[Meeting] = relationship(back_populates="summary")
     chapters: Mapped[list[Chapter]] = relationship(

@@ -15,5 +15,6 @@ class SummaryOut(ORMModel):
     overview: str
     keywords: list[str]
     generated_by: SummarySource
+    model: str | None
     chapters: list[ChapterOut]
     updated_at: datetime

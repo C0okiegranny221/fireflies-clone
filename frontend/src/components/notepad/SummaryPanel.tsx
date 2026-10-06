@@ -22,7 +22,7 @@ export const NOTE_SECTIONS = {
   speakers: "notes-speakers",
 } as const;
 
-const GENERATED_BY = { seed: "Fireflies AI", llm: "Claude", heuristic: "Fireflies AI (offline)" };
+const GENERATED_BY = { seed: "Fireflies AI", llm: "AI", heuristic: "Fireflies AI (offline)" };
 
 function Section({
   id,
@@ -171,7 +171,7 @@ export function SummaryPanel({
             title="Overview"
             aside={
               <span className="text-[11px] text-ink-tertiary">
-                by {GENERATED_BY[summary.generated_by]}
+                by {summary.model ?? GENERATED_BY[summary.generated_by]}
               </span>
             }
           >

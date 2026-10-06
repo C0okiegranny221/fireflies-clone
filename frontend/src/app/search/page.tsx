@@ -1,10 +1,15 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
-import { PageHeader } from "@/components/layout/PageHeader";
+import { SearchView } from "@/components/search/SearchView";
 
 export const metadata: Metadata = { title: "Search" };
 
-// Temporary stub — the full view lands in a later step.
-export default function Page() {
-  return <PageHeader title="Search" description="Results across all of your meetings." />;
+export default function SearchPage() {
+  // The query lives in the URL (useSearchParams), which needs a Suspense boundary.
+  return (
+    <Suspense>
+      <SearchView />
+    </Suspense>
+  );
 }

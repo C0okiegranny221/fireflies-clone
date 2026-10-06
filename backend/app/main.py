@@ -7,7 +7,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from app import models  # noqa: F401  (registers all tables on Base.metadata)
 from app.config import settings
 from app.db import Base, engine
-from app.routers import action_items, lookups, meetings, transcripts
+from app.routers import action_items, ai, lookups, meetings, transcripts
+from app.search_index import ensure_search_index
 
 API_PREFIX = "/api/v1"
 
@@ -15,6 +16,7 @@ API_PREFIX = "/api/v1"
 @asynccontextmanager
 async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
     Base.metadata.create_all(bind=engine)
+    ensure_search_index(engine)
     yield
 
 
@@ -29,7 +31,7 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
-    for module in (meetings, transcripts, action_items, lookups):
+    for module in (meetings, transcripts, action_items, lookups, ai):
         app.include_router(module.router, prefix=API_PREFIX)
 
     @app.get(f"{API_PREFIX}/health", tags=["meta"])

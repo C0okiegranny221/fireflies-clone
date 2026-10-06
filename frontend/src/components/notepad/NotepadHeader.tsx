@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, CalendarDays, Clock, Hash, Share2, WandSparkles } from "lucide-react";
+import { ArrowLeft, CalendarDays, Clock, Hash, Share2, Sparkles, WandSparkles } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -11,7 +11,13 @@ import { Button } from "@/components/ui/Button";
 import { formatDuration, formatMeetingDate, parseApiDate } from "@/lib/format";
 import type { MeetingDetail } from "@/lib/types";
 
-export function NotepadHeader({ meeting }: { meeting: MeetingDetail }) {
+export function NotepadHeader({
+  meeting,
+  onAskFred,
+}: {
+  meeting: MeetingDetail;
+  onAskFred: () => void;
+}) {
   const router = useRouter();
   return (
     <header className="flex shrink-0 flex-wrap items-center gap-x-4 gap-y-2 border-b border-line bg-surface px-4 py-3 md:px-6">
@@ -46,18 +52,27 @@ export function NotepadHeader({ meeting }: { meeting: MeetingDetail }) {
         </div>
       </div>
       <div className="flex items-center gap-2">
+        <Button variant="soft" size="sm" onClick={onAskFred} aria-label="AskFred">
+          <Sparkles />
+          <span className="hidden sm:inline">AskFred</span>
+        </Button>
         <Button
           variant="secondary"
           size="sm"
-          className="hidden sm:inline-flex"
+          className="hidden md:inline-flex"
           onClick={() => comingSoon("AI Skills")}
         >
           <WandSparkles />
           AI Skills
         </Button>
-        <Button variant="primary" size="sm" onClick={() => comingSoon("Sharing meetings")}>
+        <Button
+          variant="primary"
+          size="sm"
+          onClick={() => comingSoon("Sharing meetings")}
+          aria-label="Share"
+        >
           <Share2 />
-          Share
+          <span className="hidden sm:inline">Share</span>
         </Button>
         <MeetingActionsMenu
           meeting={meeting}
