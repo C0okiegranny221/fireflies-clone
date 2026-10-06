@@ -1,6 +1,5 @@
-import { PageHeader } from "@/components/layout/PageHeader";
+import { HomeView } from "@/components/home/HomeView";
 
-// Temporary stub — the Home dashboard lands in a later step.
 export default function HomePage() {
-  return <PageHeader title="Home" description="Your meetings, tasks and AI notes at a glance." />;
+  return <HomeView />;
 }

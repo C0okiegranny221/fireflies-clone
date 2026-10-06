@@ -1,11 +1,10 @@
 "use client";
 
 import * as Tabs from "@radix-ui/react-tabs";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { CircleCheckBig, ListTodo, PlayCircle, RefreshCcw, Search, UserRound } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { toast } from "sonner";
 
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Avatar } from "@/components/ui/Avatar";
@@ -13,6 +12,7 @@ import { Button } from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { controlClass } from "@/components/ui/Field";
+import { useToggleTask } from "@/hooks/useToggleTask";
 import { api, queryKeys } from "@/lib/api";
 import { formatClock, formatMeetingDate, parseApiDate } from "@/lib/format";
 import type { Task } from "@/lib/types";
@@ -25,35 +25,6 @@ interface MeetingGroup {
   title: string;
   startedAt: string;
   tasks: Task[];
-}
-
-function useToggleTask() {
-  const queryClient = useQueryClient();
-  const key = queryKeys.tasks();
-  return useMutation({
-    mutationFn: (task: Task) =>
-      api.actionItems.update(task.id, { is_completed: !task.is_completed }),
-    onMutate: async (task) => {
-      await queryClient.cancelQueries({ queryKey: key });
-      const previous = queryClient.getQueryData<Task[]>(key);
-      queryClient.setQueryData<Task[]>(key, (tasks) =>
-        tasks?.map((t) => (t.id === task.id ? { ...t, is_completed: !t.is_completed } : t)),
-      );
-      return { previous };
-    },
-    onSuccess: (_item, task) => {
-      if (!task.is_completed) toast.success("Task completed");
-    },
-    onError: (err, _task, ctx) => {
-      queryClient.setQueryData(key, ctx?.previous);
-      toast.error("Couldn't update the task", { description: err.message });
-    },
-    onSettled: (_data, _err, task) =>
-      Promise.all([
-        queryClient.invalidateQueries({ queryKey: key }),
-        queryClient.invalidateQueries({ queryKey: queryKeys.meeting(task.meeting_id) }),
-      ]),
-  });
 }
 
 function TaskRow({ task, onToggle }: { task: Task; onToggle: () => void }) {
