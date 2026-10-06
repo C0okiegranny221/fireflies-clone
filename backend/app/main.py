@@ -2,6 +2,7 @@ from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 from app import models  # noqa: F401  (registers all tables on Base.metadata)
@@ -34,6 +35,11 @@ def create_app() -> FastAPI:
 
     for module in (meetings, transcripts, action_items, lookups, ai):
         app.include_router(module.router, prefix=API_PREFIX)
+
+    @app.get("/", include_in_schema=False)
+    def root() -> RedirectResponse:
+        # The API has no UI of its own; send visitors to the interactive docs.
+        return RedirectResponse("/docs")
 
     @app.get(f"{API_PREFIX}/health", tags=["meta"])
     def health() -> dict[str, str]:
