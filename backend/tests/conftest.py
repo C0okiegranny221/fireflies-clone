@@ -5,9 +5,12 @@ from pathlib import Path
 
 import pytest
 
-# Point the app at a throwaway database (and never call the LLM) before it is imported.
+# Point the app at a throwaway database and force offline AI before it is imported.
+# Environment variables beat backend/.env, so a developer's real key is never used here.
 _db_path = Path(tempfile.mkdtemp()) / "test.db"
 os.environ["DATABASE_URL"] = f"sqlite:///{_db_path}"
+os.environ["LLM_PROVIDER"] = "none"
+os.environ["LLM_API_KEY"] = ""
 os.environ["ANTHROPIC_API_KEY"] = ""
 
 from fastapi.testclient import TestClient  # noqa: E402

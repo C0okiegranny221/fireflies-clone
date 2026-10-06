@@ -10,6 +10,8 @@ class Settings(BaseSettings):
 
     database_url: str = "sqlite:///./fireflies.db"
     cors_origins: list[str] = ["http://localhost:3000"]
+    # Optional regex for extra origins, e.g. Vercel preview deployments: https://.*\.vercel\.app
+    cors_origin_regex: str | None = None
 
     # --- AI provider -------------------------------------------------------------------
     # "none":   built-in heuristic summaries and keyword-retrieval answers (no network).
