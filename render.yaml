@@ -19,10 +19,13 @@ services:
       # disk below and use: sqlite:////var/data/fireflies.db
       - key: DATABASE_URL
         value: sqlite:///./fireflies.db
-      # JSON list with the Vercel URL, e.g. ["https://fireflies-clone.vercel.app"]
+      # Session cookies only over HTTPS. The browser reaches this API through the Vercel
+      # frontend's /api/v1 rewrite, so the cookie is first-party there.
+      - key: SESSION_COOKIE_SECURE
+        value: "true"
+      # CORS only matters for direct browser calls (the frontend proxies, so normally none).
       - key: CORS_ORIGINS
         sync: false
-      # Also allow this project's Vercel preview deployments.
       - key: CORS_ORIGIN_REGEX
         value: https://fireflies-clone[a-z0-9-]*\.vercel\.app
       # AI: Groq's OpenAI-compatible API. Set LLM_PROVIDER to "none" to run fully offline.

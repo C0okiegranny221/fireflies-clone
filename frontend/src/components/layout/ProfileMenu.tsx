@@ -1,8 +1,9 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Blocks, LogOut, Moon, Settings, Sun, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 import { useTheme } from "@/components/providers/ThemeProvider";
 import { Avatar } from "@/components/ui/Avatar";
@@ -13,7 +14,18 @@ import { comingSoon } from "./comingSoon";
 
 export function ProfileMenu() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { theme, toggleTheme } = useTheme();
+
+  const logOut = async () => {
+    try {
+      await api.auth.logout();
+    } catch {
+      toast.error("Couldn't reach the server; you've been signed out on this device.");
+    }
+    queryClient.clear();
+    router.replace("/login");
+  };
   const { data: me } = useQuery({ queryKey: queryKeys.me, queryFn: api.me, staleTime: Infinity });
 
   return (
@@ -61,7 +73,7 @@ export function ProfileMenu() {
           {theme === "dark" ? "Light mode" : "Dark mode"}
         </MenuItem>
         <MenuSeparator />
-        <MenuItem icon={<LogOut />} onSelect={() => comingSoon("Signing out")}>
+        <MenuItem icon={<LogOut />} onSelect={logOut}>
           Log out
         </MenuItem>
       </MenuContent>

@@ -88,7 +88,7 @@ export function SettingsView() {
         <Row label="Name">
           <input className={inputClass} value={me?.name ?? ""} disabled readOnly />
         </Row>
-        <Row label="Email" hint="Authentication is mocked; this is the default demo user.">
+        <Row label="Email" hint="Used to log in. Editing your profile is coming soon.">
           <input className={inputClass} value={me?.email ?? ""} disabled readOnly />
         </Row>
         <Row label="Appearance" hint="Choose how Fireflies looks to you.">

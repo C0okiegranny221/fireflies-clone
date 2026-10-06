@@ -1,11 +1,11 @@
-"""In-memory budget for LLM calls, so a public demo can't be used to drain an API quota."""
+"""In-memory rate budgets: LLM calls (so a public demo can't drain an API quota) and logins."""
 
 import threading
 import time
 from collections import defaultdict, deque
 
 
-class LLMBudget:
+class RateBudget:
     """
     Sliding one-hour window per client plus a rolling 24-hour cap for the whole server.
     In-memory is enough for a single-instance demo; multiple instances would need Redis.

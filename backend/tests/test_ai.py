@@ -8,7 +8,7 @@ from pydantic import BaseModel
 from app import deps
 from app.routers import ai as ai_router
 from app.services.llm import LLMError, OpenAICompatibleClient
-from app.services.rate_limit import LLMBudget
+from app.services.rate_limit import RateBudget
 
 API = "/api/v1"
 
@@ -33,10 +33,10 @@ class FakeLLM:
 
 @pytest.fixture
 def use_llm(monkeypatch: pytest.MonkeyPatch):
-    def install(fake: FakeLLM, budget: LLMBudget | None = None) -> FakeLLM:
+    def install(fake: FakeLLM, budget: RateBudget | None = None) -> FakeLLM:
         monkeypatch.setattr(deps, "get_llm", lambda: fake)
         monkeypatch.setattr(ai_router, "get_llm", lambda: fake)
-        monkeypatch.setattr(deps, "_llm_budget", budget or LLMBudget(100, 1000))
+        monkeypatch.setattr(deps, "_llm_budget", budget or RateBudget(100, 1000))
         return fake
 
     return install
@@ -131,7 +131,7 @@ def test_llm_budget_falls_back_when_exhausted(client: TestClient, use_llm) -> No
     meeting_id = _meeting_id(client, "Sprint 42")
     fake = use_llm(
         FakeLLM({"_LLMAnswer": {"answer": "From the model.", "line_ids": []}}),
-        budget=LLMBudget(per_client_per_hour=1, per_day=100),
+        budget=RateBudget(per_client_per_hour=1, per_day=100),
     )
     ask = lambda: client.post(f"{API}/meetings/{meeting_id}/ask", json={"question": "PDF export?"})  # noqa: E731
     assert ask().json()["source"] == "llm"
@@ -223,7 +223,7 @@ def test_openai_compatible_client_errors_become_llm_error(response: httpx.Respon
 
 def test_budget_windows() -> None:
     now = [0.0]
-    budget = LLMBudget(per_client_per_hour=2, per_day=3, clock=lambda: now[0])
+    budget = RateBudget(per_client_per_hour=2, per_day=3, clock=lambda: now[0])
     assert budget.try_acquire("a") and budget.try_acquire("a")
     assert not budget.try_acquire("a")  # per-client hourly limit
     assert budget.try_acquire("b")

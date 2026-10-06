@@ -1,19 +1,40 @@
-from sqlalchemy import Boolean, ForeignKey, String
+from datetime import datetime
+
+from sqlalchemy import DateTime, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db import Base
+from app.models.base import utcnow
 
 
 class User(Base):
-    """A workspace member. Auth is out of scope, so exactly one user has is_current=True."""
+    """A workspace member who can log in. Everyone shares one workspace of meetings."""
 
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(120))
-    email: Mapped[str] = mapped_column(String(255), unique=True)
+    email: Mapped[str] = mapped_column(String(255), unique=True)  # stored lower-case
     avatar_color: Mapped[str] = mapped_column(String(9), default="#7C5CFC")
-    is_current: Mapped[bool] = mapped_column(Boolean, default=False)
+    password_hash: Mapped[str] = mapped_column(String(255))
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
+
+
+class AuthSession(Base):
+    """
+    A login session. The browser holds a random token in an HttpOnly cookie; only its
+    SHA-256 hash is stored, so a leaked database can't be used to hijack sessions.
+    """
+
+    __tablename__ = "sessions"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    token_hash: Mapped[str] = mapped_column(String(64), unique=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
+    expires_at: Mapped[datetime] = mapped_column(DateTime, index=True)
+
+    user: Mapped[User] = relationship()
 
 
 class Participant(Base):

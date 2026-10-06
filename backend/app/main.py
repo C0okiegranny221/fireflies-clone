@@ -1,14 +1,15 @@
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 
 from app import models  # noqa: F401  (registers all tables on Base.metadata)
 from app.config import settings
 from app.db import Base, engine
-from app.routers import action_items, ai, lookups, meetings, transcripts
+from app.deps import current_user
+from app.routers import action_items, ai, auth, lookups, meetings, transcripts
 from app.search_index import ensure_search_index
 
 API_PREFIX = "/api/v1"
@@ -33,8 +34,10 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
+    app.include_router(auth.router, prefix=API_PREFIX)
+    # Everything else requires a logged-in session.
     for module in (meetings, transcripts, action_items, lookups, ai):
-        app.include_router(module.router, prefix=API_PREFIX)
+        app.include_router(module.router, prefix=API_PREFIX, dependencies=[Depends(current_user)])
 
     @app.get("/", include_in_schema=False)
     def root() -> RedirectResponse:

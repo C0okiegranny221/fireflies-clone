@@ -14,17 +14,19 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 import app.models  # noqa: F401  (registers all tables)
+from app.config import settings
 from app.db import Base, SessionLocal, engine
 from app.models import Channel, MeetingSource, SummarySource, User
 from app.models.base import utcnow
 from app.search_index import drop_search_index, ensure_search_index
 from app.services import meeting_service as svc
+from app.services.auth_service import hash_password
 from app.services.summarizer import ActionItemDraft, ChapterDraft, SummaryDraft
 from app.services.transcript_parser import MS_PER_WORD, ParsedSegment
 
 DATA_DIR = Path(__file__).parent / "data"
 CHANNELS = ["Engineering", "Sales", "Hiring", "Product"]
-CURRENT_USER = {"name": "Alex Rivera", "email": "alex@nimbus.io", "avatar_color": "#7C5CFC"}
+DEMO_USER = {"name": "Alex Rivera", "avatar_color": "#7C5CFC"}
 
 
 def _ms(clock: str) -> int:
@@ -58,7 +60,12 @@ def _summary(data: dict) -> SummaryDraft:
 
 
 def seed(db: Session) -> None:
-    user = User(**CURRENT_USER, is_current=True)
+    # The demo account (credentials from settings, shown on the login page).
+    user = User(
+        **DEMO_USER,
+        email=settings.demo_email,
+        password_hash=hash_password(settings.demo_password),
+    )
     db.add(user)
     channels = {name: Channel(name=name) for name in CHANNELS}
     db.add_all(channels.values())

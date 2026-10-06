@@ -75,7 +75,7 @@ export function Sidebar({
           collapsed ? "justify-center px-0" : "justify-between",
         )}
       >
-        <Link href="/" onClick={onNavigate} aria-label="Fireflies home">
+        <Link href="/home" onClick={onNavigate} aria-label="Fireflies home">
           <Logo collapsed={collapsed} />
         </Link>
         {!collapsed && (

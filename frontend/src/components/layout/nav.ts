@@ -19,7 +19,7 @@ export interface NavItem {
 
 /** Primary navigation, in the same order as the Fireflies sidebar. */
 export const PRIMARY_NAV: NavItem[] = [
-  { href: "/", label: "Home", icon: House },
+  { href: "/home", label: "Home", icon: House },
   { href: "/askfred", label: "AskFred", icon: Sparkles },
   { href: "/meetings", label: "Meetings", icon: NotebookText },
   { href: "/tasks", label: "Tasks", icon: CircleCheckBig },
@@ -32,5 +32,5 @@ export const PRIMARY_NAV: NavItem[] = [
 export const SETTINGS_NAV: NavItem = { href: "/settings", label: "Settings", icon: Settings };
 
 export function isActive(pathname: string, href: string): boolean {
-  return href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
+  return pathname === href || pathname.startsWith(`${href}/`);
 }

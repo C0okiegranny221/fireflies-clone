@@ -12,10 +12,11 @@ from app.models.meeting import (
 )
 from app.models.summary import Chapter, Summary, SummarySource
 from app.models.transcript import TranscriptSegment
-from app.models.user import Participant, User
+from app.models.user import AuthSession, Participant, User
 
 __all__ = [
     "ActionItem",
+    "AuthSession",
     "Channel",
     "Chapter",
     "Meeting",

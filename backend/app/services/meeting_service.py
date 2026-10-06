@@ -36,13 +36,6 @@ class NotFoundError(Exception):
     pass
 
 
-def get_current_user(db: Session) -> User:
-    user = db.scalar(select(User).where(User.is_current.is_(True)))
-    if user is None:
-        raise NotFoundError("No current user; run the seed script")
-    return user
-
-
 # ------------------------------------------------------------------ participants
 
 

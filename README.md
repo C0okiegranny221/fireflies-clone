@@ -34,6 +34,10 @@ A full-stack clone of the [Fireflies.ai](https://fireflies.ai) meeting assistant
 | CRUD for meetings & action items, persisted | Create (upload `.txt/.vtt/.json`, paste, or form), edit title/participants/channel/topics, delete (with bulk actions); add/edit/assign/complete/delete action items (optimistic, with Undo) |
 | Fireflies experience | Fireflies palette & layout, modals, toasts, empty/loading/error states, "Coming soon" pages for Integrations, live bot, sharing, analytics |
 
+### Beyond the brief
+- **Landing page** at `/` following fireflies.ai's structure (hero, product sections, capture methods, search & AskFred, privacy, FAQ, CTA, footer), with original copy and real product screenshots.
+- **Email/password accounts**: sign up, log in (with a one-click demo account), log out. Sessions are server-side and stored as token hashes in an `HttpOnly`, `SameSite=Lax` cookie; passwords use salted scrypt; logins are rate-limited. All accounts share one workspace.
+
 ### Bonus
 - **AskFred**: ask questions about a meeting; answers cite transcript lines that seek and play the audio. Uses Groq when configured, otherwise a keyword-retrieval fallback.
 - **Global search** across every transcript (SQLite FTS5 with stemming, prefix matching, ranking and highlighted snippets), opening meetings at the matching moment.
@@ -59,11 +63,11 @@ uvicorn app.main:app --reload
 # Frontend: http://localhost:3000
 cd frontend
 npm install
-cp .env.example .env.local        # NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
+cp .env.example .env.local        # BACKEND_URL=http://localhost:8000 (proxied at /api/v1)
 npm run dev
 ```
 
-Sample transcripts to try the upload flow are linked from the upload dialog (`frontend/public/samples/`).
+Open http://localhost:3000 for the landing page, then **Log in → Try the demo account** (`alex@nimbus.io` / `fireflies-demo`) or create an account. Sample transcripts for the upload flow are linked from the upload dialog (`frontend/public/samples/`).
 
 ### AI modes
 Every AI feature works without a key. Pick a provider in `backend/.env`:
@@ -131,6 +135,7 @@ flowchart LR
 ```mermaid
 erDiagram
   users ||--o{ meetings : hosts
+  users ||--o{ sessions : "logs in with"
   users |o--o{ participants : "is (optional)"
   channels |o--o{ meetings : contains
   meetings ||--o{ meeting_participants : has
@@ -143,6 +148,17 @@ erDiagram
   participants |o--o{ action_items : "assigned to"
   meetings }o--o{ tags : "meeting_tags"
 
+  users {
+    int id PK
+    string email "unique, lower-case"
+    string password_hash "scrypt"
+  }
+  sessions {
+    int id PK
+    string token_hash "SHA-256 of the cookie token"
+    int user_id FK
+    datetime expires_at
+  }
   meetings {
     int id PK
     string title
@@ -223,7 +239,11 @@ Base URL `/api/v1`. Interactive OpenAPI docs are at `/docs`.
 | POST | `/meetings/{id}/ask` | AskFred: `{question, history}` → `{answer, citations[], source, model}` |
 | GET | `/search?q=` | Meetings matching title/people/topics plus FTS transcript hits with snippets |
 | GET | `/meetings/{id}/export?format=md\|txt` | Download notes + transcript |
+| POST | `/auth/signup`, `/auth/login`, `/auth/logout` | Create account / log in (sets the `ff_session` cookie) / revoke the session |
+| GET | `/auth/me`, `/auth/demo` | Current user (401 if not logged in) / public demo credentials |
 | GET | `/users/me`, `/participants`, `/channels`, `/tags`, `/app-info`, `/health` | Lookups, active AI mode, health check |
+
+Everything except `/auth/*` and `/health` requires a session (401 otherwise; a dead cookie is cleared in the same response).
 
 Errors use FastAPI's `{"detail": ...}` shape with meaningful status codes: 404 for unknown ids, 409 when regenerating notes for a meeting without a transcript, 413 for oversized uploads, 415 for unsupported file types, and 422 for validation or parse errors such as "Segment 0 is missing 'text'".
 
@@ -231,7 +251,8 @@ Errors use FastAPI's `{"detail": ...}` shape with meaningful status codes: 404 f
 
 ## Assumptions & scope
 
-- **No real authentication.** One default logged-in user (Alex Rivera) is seeded; the profile menu's "Log out" is a placeholder.
+- **One shared workspace.** Every account sees the same meetings (a single team); whoever creates a meeting is its host. The seeded demo account is Alex Rivera. Password reset, email verification and OAuth are out of scope.
+- **Clone notice.** The landing and auth pages state that this is an unaffiliated demo, since it collects passwords on a look-alike page.
 - **No speech-to-text.** Meetings come from transcripts. The seeded meetings' audio was generated with text-to-speech so the player has something real to play. Uploaded transcripts have no recording, so the player runs on a timer.
 - **Placeholders ("Coming soon")** cover the live meeting bot, calendar sync, integrations, sharing and teams, AI Skills, Analytics, Voice Agents and cross-meeting AskFred.
 - **The offline summarizer is heuristic** (keyword frequency, sentence scoring, commitment phrases such as "I'll…"). It's good enough to demo but can flag non-tasks. LLM mode is clearly better and records the model on each summary.
@@ -241,5 +262,5 @@ Errors use FastAPI's `{"detail": ...}` shape with meaningful status codes: 404 f
 ## Deployment
 
 - **Backend → Render:** `render.yaml` blueprint. It seeds demo data on first boot and reads `CORS_ORIGINS` and `LLM_API_KEY` from the dashboard; secrets never go in git.
-- **Frontend → Vercel:** the `frontend` folder is linked to the `fireflies-clone` project and deployed with `vercel deploy --prod`, with `NEXT_PUBLIC_API_URL=https://fireflies-clone-api-0aet.onrender.com/api/v1` set for production and preview builds. The backend's `CORS_ORIGIN_REGEX` admits the project's production and preview domains.
+- **Frontend → Vercel:** the `frontend` folder is linked to the `fireflies-clone` project and deployed with `vercel deploy --prod`. `BACKEND_URL=https://fireflies-clone-api-0aet.onrender.com` makes Next.js proxy `/api/v1/*` to the API, so the session cookie is first-party on the Vercel domain (browsers block third-party cookies) and no CORS is needed.
 - Free Render instances sleep when idle, so the first request after a pause can take up to a minute while the API wakes.

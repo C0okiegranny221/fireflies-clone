@@ -22,10 +22,9 @@ import type {
   User,
 } from "./types";
 
-const BASE_URL = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1").replace(
-  /\/$/,
-  "",
-);
+// Same-origin path, proxied to the backend by next.config.ts rewrites (keeps the session
+// cookie first-party).
+const BASE_URL = "/api/v1";
 
 export class ApiError extends Error {
   constructor(
@@ -49,6 +48,16 @@ function toSearch(params?: Query): string {
   return s ? `?${s}` : "";
 }
 
+/** Called on any 401 outside the auth endpoints: the session is gone, so go log in again. */
+function redirectToLogin() {
+  if (typeof window === "undefined" || window.location.pathname.startsWith("/login")) return;
+  const next = window.location.pathname + window.location.search;
+  // A full page load (not router.push) on purpose: this runs outside React, and reloading
+  // drops every cached query from the expired session.
+  // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+  window.location.href = `/login?next=${encodeURIComponent(next)}`;
+}
+
 async function request<T>(path: string, init: RequestInit & { query?: Query } = {}): Promise<T> {
   const { query, headers, ...rest } = init;
   const isForm = rest.body instanceof FormData;
@@ -56,6 +65,7 @@ async function request<T>(path: string, init: RequestInit & { query?: Query } = 
     ...rest,
     headers: isForm ? headers : { "Content-Type": "application/json", ...headers },
   });
+  if (res.status === 401 && !path.startsWith("/auth/")) redirectToLogin();
   if (!res.ok) {
     let message = res.statusText;
     try {
@@ -72,6 +82,20 @@ async function request<T>(path: string, init: RequestInit & { query?: Query } = 
 const json = (body: unknown) => JSON.stringify(body);
 
 export const api = {
+  auth: {
+    login: (email: string, password: string) =>
+      request<User>("/auth/login", { method: "POST", body: json({ email, password }) }),
+    signup: (name: string, email: string, password: string) =>
+      request<User>("/auth/signup", { method: "POST", body: json({ name, email, password }) }),
+    logout: () => request<void>("/auth/logout", { method: "POST" }),
+    demo: () => request<{ email: string; password: string }>("/auth/demo"),
+    /** The logged-in user, or null (never redirects): for public pages like the landing. */
+    session: () =>
+      request<User>("/auth/me").catch((err) => {
+        if (err instanceof ApiError && err.status === 401) return null;
+        throw err;
+      }),
+  },
   me: () => request<User>("/users/me"),
   participants: () => request<Participant[]>("/participants"),
   channels: () => request<Channel[]>("/channels"),
