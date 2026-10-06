@@ -27,16 +27,19 @@ CURRENT_USER = {"name": "Alex Rivera", "email": "alex@nimbus.io", "avatar_color"
 
 
 def _ms(clock: str) -> int:
+    """ "m:ss" or "m:ss.s" → milliseconds."""
     minutes, seconds = clock.split(":")
-    return (int(minutes) * 60 + int(seconds)) * 1000
+    return round((int(minutes) * 60 + float(seconds)) * 1000)
 
 
-def _segments(rows: list[list[str]]) -> list[ParsedSegment]:
-    """Each segment runs until the next one starts; the last runs for its estimated length."""
+def _segments(rows: list[list[str]], end_ms: int | None) -> list[ParsedSegment]:
+    """Each segment runs until the next one starts; the last runs to the end of the
+    recording, or for its estimated speaking time when there is no recording."""
     segments = [ParsedSegment(speaker, text, _ms(start)) for start, speaker, text in rows]
     for seg, nxt in zip(segments, [*segments[1:], None], strict=True):
         assert seg.start_ms is not None
-        seg.end_ms = nxt.start_ms if nxt else seg.start_ms + len(seg.text.split()) * MS_PER_WORD
+        estimated_end = seg.start_ms + len(seg.text.split()) * MS_PER_WORD
+        seg.end_ms = nxt.start_ms if nxt else (end_ms or estimated_end)
     return segments
 
 
@@ -77,13 +80,17 @@ def seed(db: Session) -> None:
         started_at = datetime.combine(today - timedelta(days=data["days_ago"]), time(hour, minute))
         # Keep "today" meetings in the past regardless of when the seed runs.
         started_at = min(started_at, utcnow().replace(second=0, microsecond=0) - timedelta(hours=1))
-        segments = _segments(data["segments"])
+        # Meetings with generated audio (see generate_audio.py) carry their exact duration.
+        duration_ms = _ms(data["duration"]) if "duration" in data else None
+        segments = _segments(data["segments"], duration_ms)
         meeting = svc.create_meeting(
             db,
             svc.NewMeeting(
                 title=data["title"],
                 host=user,
                 started_at=started_at,
+                duration_sec=round(duration_ms / 1000) if duration_ms else None,
+                media_url=data.get("media"),
                 source=MeetingSource(data["source"]),
                 participants=tuple(p["name"] for p in data["participants"]),
                 segments=tuple(segments),
